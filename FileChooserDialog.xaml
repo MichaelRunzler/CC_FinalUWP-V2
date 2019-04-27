@@ -1,0 +1,26 @@
+﻿<ContentDialog
+    x:Class="FinalUWP.FileChooserDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:FinalUWP"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Title="Choose an Application:"
+    PrimaryButtonText="Confirm"
+    SecondaryButtonText="Cancel"
+    PrimaryButtonClick="ContentDialog_PrimaryButtonClick"
+    SecondaryButtonClick="ContentDialog_SecondaryButtonClick">
+
+    <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,10,0,0">
+        <TextBlock x:Name="ErrorDisplay" HorizontalAlignment="Left" Text="" Margin="5,0,0,0" Foreground="Red" Visibility="Collapsed"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,0,0">
+            <Button x:Name="ChangePath" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,10,5" Content="Browse" Click="ChangePath_Click"/>
+            <TextBox x:Name="FilePath" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5,5,5,5" Width="250" IsReadOnly="True" TextWrapping="NoWrap"/>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,0,0">
+            <TextBlock x:Name="AppNameTag" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,10,0" Text="Display Name" FontSize="18"/>
+            <TextBox x:Name="AppName" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,5,5,5" Width="200" TextWrapping="NoWrap"/>
+        </StackPanel>
+    </StackPanel>
+</ContentDialog>

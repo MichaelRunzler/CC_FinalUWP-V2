@@ -181,6 +181,13 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="FileChooserDialog.xaml.h">
+      <DependentUpon>FileChooserDialog.xaml</DependentUpon>
+    </ClInclude>
+    <ClInclude Include="Library\AppIndex.h" />
+    <ClInclude Include="Library\AppRef.h" />
+    <ClInclude Include="Library\Clearable.h" />
+    <ClInclude Include="Library\SecurityManager.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h">
       <DependentUpon>App.xaml</DependentUpon>
@@ -188,14 +195,19 @@
     <ClInclude Include="MainPage.xaml.h">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClInclude>
+    <ClInclude Include="PINPadDialog.xaml.h">
+      <DependentUpon>PINPadDialog.xaml</DependentUpon>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml">
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="FileChooserDialog.xaml" />
     <Page Include="MainPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="PINPadDialog.xaml" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">
@@ -271,6 +283,12 @@
     <ClCompile Include="App.xaml.cpp">
       <DependentUpon>App.xaml</DependentUpon>
     </ClCompile>
+    <ClCompile Include="FileChooserDialog.xaml.cpp">
+      <DependentUpon>FileChooserDialog.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="Library\AppIndex.cpp" />
+    <ClCompile Include="Library\AppRef.cpp" />
+    <ClCompile Include="Library\SecurityManager.cpp" />
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </ClCompile>
@@ -283,6 +301,9 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="PINPadDialog.xaml.cpp">
+      <DependentUpon>PINPadDialog.xaml</DependentUpon>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

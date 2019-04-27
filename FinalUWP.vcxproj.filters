@@ -8,15 +8,39 @@
       <UniqueIdentifier>b6d8fb00-c677-45a3-b36c-c232ec089819</UniqueIdentifier>
       <Extensions>bmp;fbx;gif;jpg;jpeg;tga;tiff;tif;png</Extensions>
     </Filter>
+    <Filter Include="Library">
+      <UniqueIdentifier>{a17179f8-ff77-4035-9f42-fcd66d4b927f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="App.xaml" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp" />
+    <ClCompile Include="Library\AppIndex.cpp">
+      <Filter>Library</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\AppRef.cpp">
+      <Filter>Library</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\SecurityManager.cpp">
+      <Filter>Library</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
+    <ClInclude Include="Library\AppIndex.h">
+      <Filter>Library</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\AppRef.h">
+      <Filter>Library</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\SecurityManager.h">
+      <Filter>Library</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Clearable.h">
+      <Filter>Library</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\LockScreenLogo.scale-200.png">
@@ -202,6 +226,8 @@
   </ItemGroup>
   <ItemGroup>
     <Page Include="MainPage.xaml" />
+    <Page Include="FileChooserDialog.xaml" />
+    <Page Include="PINPadDialog.xaml" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\..\UWPProcessLauncher\x64\Debug\UWPProcessLauncher.exe">
