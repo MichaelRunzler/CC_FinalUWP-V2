@@ -237,7 +237,7 @@
     <Page Include="MetaEdit.xaml" />
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="..\..\UWPProcessLauncher\x64\Debug\UWPProcessLauncher.exe">
+    <CopyFileToFolders Include="UWPProcessLauncher\x64\Debug\UWPProcessLauncher.exe">
       <Filter>Assets</Filter>
     </CopyFileToFolders>
   </ItemGroup>

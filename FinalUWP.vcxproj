@@ -218,12 +218,11 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <CopyFileToFolders Include="..\..\UWPProcessLauncher\x64\Debug\UWPProcessLauncher.exe">
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
-      <FileType>Document</FileType>
-      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
-    </CopyFileToFolders>
     <None Include="FinalUWP_TemporaryKey.pfx" />
+    <CopyFileToFolders Include="UWPProcessLauncher\x64\Debug\UWPProcessLauncher.exe">
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
+      <FileType>Document</FileType>
+    </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Assets\del.png" />

@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.28803.202
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FinalUWP", "FinalUWP.vcxproj", "{9BC2872D-ED54-40D9-95AF-2D6353A5462D}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UWPProcessLauncher", "..\..\UWPProcessLauncher\UWPProcessLauncher.vcxproj", "{EA1E0145-1BD2-4DBE-A619-DAABDB5EF51B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "UWPProcessLauncher", "UWPProcessLauncher\UWPProcessLauncher.vcxproj", "{EA1E0145-1BD2-4DBE-A619-DAABDB5EF51B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
