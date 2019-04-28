@@ -9,6 +9,7 @@
 using namespace FinalUWP;
 
 using namespace Platform;
+using namespace Platform::Collections;
 using namespace Windows::ApplicationModel;
 using namespace Windows::ApplicationModel::Activation;
 using namespace Windows::Foundation;
@@ -110,11 +111,8 @@ void App::OnSuspending(Object^ sender, SuspendingEventArgs^ e)
     (void) sender;  // Unused parameter
     (void) e;   // Unused parameter
 
-	writeData(ApplicationData::Current->LocalFolder, APPLIST_FILE, AppIndex::serialize(), []() {
-	});
-
-	writeData(ApplicationData::Current->LocalFolder, SECURITY_FILE, SecurityManager::serialize(), []() {
-	});
+	writeData(ApplicationData::Current->LocalFolder, APPLIST_FILE, AppIndex::serialize(), []() {});
+	writeData(ApplicationData::Current->LocalFolder, SECURITY_FILE, SecurityManager::serialize(), []() {});
 }
 
 template <typename T>
@@ -174,7 +172,7 @@ void FinalUWP::App::readData(StorageFolder^ parent, String^ name, UINT start, UI
 		}
 
 		DataReader^ dr = ref new DataReader(stream); // Create data writer object, attach to stream
-		UINT size = len == 0 || len > stream->Size ? stream->Size : len; // Determine number of bytes to be read
+		size_t size = len == 0 || len > stream->Size ? stream->Size : len; // Determine number of bytes to be read
 		concurrency::create_task(dr->LoadAsync(size)).then([dr, stream, size, &lambda](UINT l)
 		{
 			std::vector<BYTE>* dest = new std::vector<BYTE>();

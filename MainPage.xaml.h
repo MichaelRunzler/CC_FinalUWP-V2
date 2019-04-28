@@ -6,6 +6,11 @@
 #pragma once
 
 #include "MainPage.g.h"
+#include "MetaEdit.xaml.h"
+#include "FileChooserDialog.xaml.h"
+#include "PINPadDialog.xaml.h"
+#include "Library/AppIndex.h"
+#include "Library/SecurityManager.h"
 
 namespace FinalUWP
 {
@@ -17,8 +22,18 @@ namespace FinalUWP
 	public:
 		MainPage();
 
+	protected:
+		void setAdminStateL(BOOL state);
+		void setAdminStateD(UINT delay);
+		void notifyNoFile(UINT appIndex);
+
 	private:
-		void AppList_ItemClick(Platform::Object^ sender, Windows::UI::Xaml::Controls::ItemClickEventArgs^ e);
+		Windows::UI::Xaml::Interop::IBindableVector^ appSource;
+		Windows::UI::Xaml::Interop::IBindableVector^ metaSource;
+		FinalUWP::FileChooserDialog^ appPickerDialog;
+		FinalUWP::PINPadDialog^ PINEntryDialog;
+		BOOL hasLauncher;
+
 		void Launch_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void MoveUp_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void MoveDown_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
@@ -29,5 +44,6 @@ namespace FinalUWP
 		void Reset_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void EditMetadata_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void AppList_KeyUp(Platform::Object^ sender, Windows::UI::Xaml::Input::KeyRoutedEventArgs^ e);
+		void AppList_SelectionChanged(Platform::Object^ sender, Windows::UI::Xaml::Controls::SelectionChangedEventArgs^ e);
 	};
 }

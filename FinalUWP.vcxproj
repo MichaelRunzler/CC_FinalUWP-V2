@@ -187,7 +187,11 @@
     <ClInclude Include="Library\AppIndex.h" />
     <ClInclude Include="Library\AppRef.h" />
     <ClInclude Include="Library\Clearable.h" />
+    <ClInclude Include="Library\MetaPair.h" />
     <ClInclude Include="Library\SecurityManager.h" />
+    <ClInclude Include="MetaEdit.xaml.h">
+      <DependentUpon>MetaEdit.xaml</DependentUpon>
+    </ClInclude>
     <ClInclude Include="pch.h" />
     <ClInclude Include="App.xaml.h">
       <DependentUpon>App.xaml</DependentUpon>
@@ -207,6 +211,7 @@
     <Page Include="MainPage.xaml">
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="MetaEdit.xaml" />
     <Page Include="PINPadDialog.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -216,6 +221,7 @@
     <CopyFileToFolders Include="..\..\UWPProcessLauncher\x64\Debug\UWPProcessLauncher.exe">
       <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</DeploymentContent>
       <FileType>Document</FileType>
+      <DeploymentContent Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</DeploymentContent>
     </CopyFileToFolders>
     <None Include="FinalUWP_TemporaryKey.pfx" />
   </ItemGroup>
@@ -288,9 +294,13 @@
     </ClCompile>
     <ClCompile Include="Library\AppIndex.cpp" />
     <ClCompile Include="Library\AppRef.cpp" />
+    <ClCompile Include="Library\MetaPair.cpp" />
     <ClCompile Include="Library\SecurityManager.cpp" />
     <ClCompile Include="MainPage.xaml.cpp">
       <DependentUpon>MainPage.xaml</DependentUpon>
+    </ClCompile>
+    <ClCompile Include="MetaEdit.xaml.cpp">
+      <DependentUpon>MetaEdit.xaml</DependentUpon>
     </ClCompile>
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

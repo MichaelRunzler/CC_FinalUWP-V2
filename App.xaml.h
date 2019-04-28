@@ -8,6 +8,8 @@
 #include "App.g.h"
 #include "Library/AppIndex.h"
 #include "Library/SecurityManager.h"
+#include <thread>
+#include <chrono>
 
 namespace FinalUWP
 {

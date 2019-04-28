@@ -23,8 +23,6 @@ private:
 	static std::vector<AppRef> appList;
 
 public:
-	static UINT runningPID;
-
 	static void setBasePath(std::wstring& path);
 
 	static void add(std::wstring& name, std::wstring& relPath);

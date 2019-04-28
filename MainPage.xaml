@@ -26,8 +26,12 @@
                         <Setter Target="AppListDivider.Visibility" Value="Collapsed"/>
                         <Setter Target="AppListVDivider.Visibility" Value="Visible"/>
                         <Setter Target="DetailVDivider.Visibility" Value="Visible"/>
-                        <Setter Target="AppList.MinHeight" Value="250"/>
-                        <Setter Target="DetailList.MinHeight" Value="250"/>
+                        <Setter Target="AppList.Width" Value="400"/>
+                        <Setter Target="DetailList.Width" Value="400"/>
+                        <Setter Target="AppList.Height" Value="250"/>
+                        <Setter Target="DetailList.Height" Value="250"/>
+                        <Setter Target="AppList.MaxHeight" Value="250"/>
+                        <Setter Target="DetailList.MaxHeight" Value="250"/>
                         <Setter Target="AppList.BorderThickness" Value="2"/>
                         <Setter Target="DetailList.BorderThickness" Value="2"/>
                     </VisualState.Setters>
@@ -47,8 +51,12 @@
                         <Setter Target="AppListDivider.Visibility" Value="Visible"/>
                         <Setter Target="AppListVDivider.Visibility" Value="Collapsed"/>
                         <Setter Target="DetailVDivider.Visibility" Value="Collapsed"/>
-                        <Setter Target="AppList.MinHeight" Value="100"/>
-                        <Setter Target="DetailList.MinHeight" Value="100"/>
+                        <Setter Target="AppList.Width" Value="300"/>
+                        <Setter Target="DetailList.Width" Value="300"/>
+                        <Setter Target="AppList.Height" Value="125"/>
+                        <Setter Target="DetailList.Height" Value="125"/>
+                        <Setter Target="AppList.MaxHeight" Value="125"/>
+                        <Setter Target="DetailList.MaxHeight" Value="125"/>
                         <Setter Target="AppList.BorderThickness" Value="0"/>
                         <Setter Target="DetailList.BorderThickness" Value="0"/>
                     </VisualState.Setters>
@@ -62,7 +70,7 @@
                         <Setter Target="RemoveApp.Visibility" Value="Visible"/>
                         <Setter Target="EditMetadata.Visibility" Value="Visible"/>
                         <Setter Target="Reset.Visibility" Value="Visible"/>
-                        <Setter Target="LockImage.Source" Value="/Assets/unlock.png"/>
+                        <Setter Target="LockImage.Source" Value="/Assets/lock.png"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="NoAdmin">
@@ -72,7 +80,7 @@
                         <Setter Target="RemoveApp.Visibility" Value="Collapsed"/>
                         <Setter Target="EditMetadata.Visibility" Value="Collapsed"/>
                         <Setter Target="Reset.Visibility" Value="Collapsed"/>
-                        <Setter Target="LockImage.Source" Value="/Assets/lock.png"/>
+                        <Setter Target="LockImage.Source" Value="/Assets/unlock.png"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -80,8 +88,9 @@
 
         <StackPanel x:Name="AppListContainer" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Stretch">
             <TextBlock x:Name="AppListHeader" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Available Apps" FontSize="24"/>
-            <ListView x:Name="AppList" Width="400" MinHeight="250" Margin="0,0,0,0" HorizontalAlignment="Center" ItemClick="AppList_ItemClick" KeyUp="AppList_KeyUp" BorderBrush="LightSkyBlue" BorderThickness="2"/>
-            <Button x:Name="Launch" Width="300" Margin="0, 10, 0, 10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="Launch_Click" FontSize="16" FontWeight="SemiBold"  Content="Launch App"/>
+            <ListView x:Name="AppList" Width="400" Height="250" MaxHeight="250" Margin="0,0,0,0" HorizontalAlignment="Center" SelectionChanged="AppList_SelectionChanged" KeyUp="AppList_KeyUp" BorderBrush="LightSkyBlue" BorderThickness="2"
+                      ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollMode="Enabled" ScrollViewer.IsScrollInertiaEnabled="True"/>
+            <Button x:Name="Launch" Width="300" Margin="0,10,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="Launch_Click" FontSize="16" FontWeight="SemiBold"  Content="Launch App"/>
             <Image x:Name="AppListDivider" Source="/Assets/divider.png" Stretch="Fill" MaxHeight="12" Visibility="Collapsed"/>
         </StackPanel>
 
@@ -89,10 +98,10 @@
 
         <StackPanel x:Name="ControlParentContainer" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top">
             <StackPanel x:Name="ListControlContainer" Margin="20,10,20,10" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top">
-                <Button x:Name="MoveUp" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="30" Width="30" Click="MoveUp_Click" ToolTipService.ToolTip="Move Item UP">
+                <Button x:Name="MoveUp" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="30" Width="30" Click="MoveUp_Click" ToolTipService.ToolTip="Move Cursor UP">
                     <Image Source="/Assets/up_arrow.png" Stretch="Fill" MaxHeight="30" MaxWidth="30"/>
                 </Button>
-                <Button x:Name="MoveDown" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="30" Width="30" Click="MoveDown_Click" ToolTipService.ToolTip="Move Item DOWN">
+                <Button x:Name="MoveDown" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="30" Width="30" Click="MoveDown_Click" ToolTipService.ToolTip="Move Cursor DOWN">
                     <Image Source="/Assets/dn_arrow.png" Stretch="Fill" MaxHeight="30" MaxWidth="30"/>
                 </Button>
                 <Button x:Name="AddApp" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="30" Width="30" Click="AddApp_Click" ToolTipService.ToolTip="Add App">
@@ -107,7 +116,7 @@
 
             <StackPanel x:Name="SecurityContainer" Margin="20,10,20,10" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Bottom">
                 <Button x:Name="Lock" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="40" Width="40" Click="Lock_Click" ToolTipService.ToolTip="Enable/Disable Administrator Access">
-                    <Image x:Name="LockImage" Source="/Assets/unlock.png" Stretch="Fill" MaxHeight="40" MaxWidth="40"/>
+                    <Image x:Name="LockImage" Source="/Assets/lock.png" Stretch="Fill" MaxHeight="40" MaxWidth="40"/>
                 </Button>
                 <Button x:Name="PassCode" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="40" Width="40" Click="PassCode_Click" ToolTipService.ToolTip="Set/Reset Administrator Access PIN">
                     <Image Source="/Assets/PIN.png" Stretch="Fill" MaxHeight="40" MaxWidth="40"/>
@@ -123,7 +132,9 @@
         <StackPanel x:Name="DetailContainer" Margin="10,10,10,10" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top">
             <Image x:Name="DetailDivider" Source="/Assets/divider.png" Stretch="Fill" MaxHeight="12" Visibility="Collapsed"/>
             <TextBlock x:Name="DetailHeader" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Top" Text="Details" FontSize="24"/>
-            <ListView x:Name="DetailList" Width="400" MinHeight="250" Margin="0,0,0,0" HorizontalAlignment="Center" SelectionMode="None" BorderBrush="LightSkyBlue" BorderThickness="2"/>
+            <ListView x:Name="DetailList" Width="400" Height="250" MaxHeight="250" Margin="0,0,0,0" HorizontalAlignment="Center" SelectionMode="None" BorderBrush="LightSkyBlue" BorderThickness="2" 
+                      ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollMode="Enabled" 
+                      ScrollViewer.IsScrollInertiaEnabled="True"/>
             <Button x:Name="EditMetadata" Width="300" Margin="0, 10, 0, 10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="EditMetadata_Click" FontSize="16" Content="Edit Metadata..."/>
         </StackPanel>
 

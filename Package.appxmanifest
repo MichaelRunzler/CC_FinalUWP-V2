@@ -44,7 +44,20 @@
       </uap:VisualElements>
 
       <Extensions>
-        <desktop:Extension Category="windows.fullTrustProcess" Executable="UWPProcessLauncher.exe"/>
+        <desktop:Extension Category="windows.fullTrustProcess" Executable="UWPProcessLauncher.exe">
+          <desktop:FullTrustProcess>
+            <desktop:ParameterGroup GroupId="FileAccess" Parameters="/file &quot;%HomeDrive%%HomePath%\Documents\ARK Software\processName.tpc&quot;"/>
+          </desktop:FullTrustProcess>
+        </desktop:Extension>
+
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="tpc">
+            <uap:SupportedFileTypes>
+              <uap:FileType>.tpc</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:Logo>Assets\SmallTile.scale-100.png</uap:Logo>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
@@ -52,5 +65,6 @@
   <Capabilities>
     <Capability Name="internetClient"/>
     <rescap:Capability Name="runFullTrust"/>
+    <uap:Capability Name="documentsLibrary"/>
   </Capabilities>
 </Package>

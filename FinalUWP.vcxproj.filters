@@ -26,6 +26,9 @@
     <ClCompile Include="Library\SecurityManager.cpp">
       <Filter>Library</Filter>
     </ClCompile>
+    <ClCompile Include="Library\MetaPair.cpp">
+      <Filter>Library</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -39,6 +42,9 @@
       <Filter>Library</Filter>
     </ClInclude>
     <ClInclude Include="Library\Clearable.h">
+      <Filter>Library</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\MetaPair.h">
       <Filter>Library</Filter>
     </ClInclude>
   </ItemGroup>
@@ -228,6 +234,7 @@
     <Page Include="MainPage.xaml" />
     <Page Include="FileChooserDialog.xaml" />
     <Page Include="PINPadDialog.xaml" />
+    <Page Include="MetaEdit.xaml" />
   </ItemGroup>
   <ItemGroup>
     <CopyFileToFolders Include="..\..\UWPProcessLauncher\x64\Debug\UWPProcessLauncher.exe">

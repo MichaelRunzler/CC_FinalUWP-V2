@@ -6,7 +6,7 @@ AppRef::AppRef() {
 	AppRef(L"", L"");
 }
 
-AppRef::AppRef(std::wstring name, std::wstring path)
+AppRef::AppRef(const std::wstring name,const std::wstring path)
 {
 	AppRef::appName = name;
 	AppRef::absolutePath = path;
@@ -17,16 +17,19 @@ std::wstring AppRef::toString() {
 	return appName + L"; " + absolutePath;
 }
 
-UINT AppRef::metaToString(std::wstring* dest)
+std::wstring* AppRef::metaToString(size_t* size)
 {
-	dest = new std::wstring[metadata.size()];
+	std::wstring* dest = new std::wstring[metadata.size()];
 
+	UINT i = 0;
 	for(std::pair<std::wstring, std::wstring> p : metadata){
-		*dest = p.first + L": " + p.second;
-		dest++;
+		dest[i] = p.first + L": " + p.second;
+		i++;
 	}
 
-	return metadata.size();
+	*size = metadata.size();
+
+	return dest;
 }
 
 bool AppRef::operator==(const AppRef& o) {
@@ -151,20 +154,23 @@ void AppRef::fromBytesM(std::vector<BYTE>& src, std::map<std::wstring, std::wstr
 	dest = std::map<std::wstring, std::wstring>();
 
 	std::vector<BYTE> buffer = std::vector<BYTE>();
-	std::pair<std::wstring, std::wstring> tmp = std::pair<std::wstring, std::wstring>();
+	std::wstring key = L"";
+	std::wstring val = L"";
 	for(auto ptr = src.begin(); ptr < src.end(); ptr++)
 	{
 		if(checkFlag(ptr, 0xF9))
 		{
-			fromBytes(buffer, &tmp.first);
+			fromBytes(buffer, &key);
 			buffer.clear();
-			ptr += 2;
+			ptr ++;
 		}else if(checkFlag(ptr, 0xF8))
 		{
-			fromBytes(buffer, &tmp.second);
+			fromBytes(buffer, &val);
 			buffer.clear();
-			ptr += 2;
-			dest[tmp.first] = tmp.second;
+			ptr ++;
+			dest.insert_or_assign(key, val);
+			key.clear();
+			val.clear();
 		}else
 			buffer.push_back(*ptr);
 	}

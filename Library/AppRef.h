@@ -41,7 +41,7 @@ public:
 	AppRef(std::wstring name, std::wstring path);
 
 	std::wstring toString();
-	UINT metaToString(std::wstring* dest);
+	std::wstring* metaToString(size_t* size);
 
 	SIZE_T size();
 

@@ -3,7 +3,6 @@
 
 std::wstring AppIndex::basePath = []() -> std::wstring {return L"";}();
 std::vector<AppRef> AppIndex::appList = []() -> std::vector<AppRef> {return std::vector<AppRef>(); }();
-UINT AppIndex::runningPID = []() -> UINT {return -1; }();
 
 
 void AppIndex::setBasePath(std::wstring& path) {

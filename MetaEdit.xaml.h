@@ -1,6 +1,8 @@
 ﻿#pragma once
 
 #include "MetaEdit.g.h"
+#include "Library/MetaPair.h"
+#include "MainPage.xaml.h"
 
 namespace FinalUWP
 {
@@ -12,5 +14,22 @@ namespace FinalUWP
 	{
 	public:
 		MetaEdit();
+
+		property Windows::UI::Xaml::Interop::IBindableVector^ MetaData {
+			Windows::UI::Xaml::Interop::IBindableVector^ get() { return metaSource; }
+			void set(Windows::UI::Xaml::Interop::IBindableVector^ newVal) { this->metaSource = newVal; }
+		}
+
+	protected:
+		void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
+
+	private:
+		UINT editingIndex;
+		Windows::UI::Xaml::Interop::IBindableVector^ metaSource;
+
+		void Cancel_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void Commit_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void AddEntry_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void DeleteEntry_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }
