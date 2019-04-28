@@ -35,7 +35,16 @@
         </VisualStateManager.VisualStateGroups>
 
         <TextBlock x:Name="Title" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5,5,5,10" Text="Metadata Editor" FontSize="24"/>
-        <TextBlock x:Name="EditState" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5,5,5,5" FontSize="16" FontStyle="Italic" Text="Editing: "/>
+        <Grid HorizontalAlignment="Center" MinWidth="250">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="2*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="EditState" Grid.Column="0" Margin="5,9,5,5" FontSize="16" FontStyle="Italic" Text="Editing: " TextWrapping="NoWrap"/>
+            <TextBox x:Name="EditName" Grid.Column="1" Margin="5,5,5,5" FontSize="16" FontStyle="Italic" ToolTipService.ToolTip="This app's display name"/>
+            <Button x:Name="PathEdit" Grid.Column="2" Margin="5,5,5,5" FontSize="16" Content="Path..." Click="PathEdit_Click" ToolTipService.ToolTip="Change which file this app reference points to"/>
+        </Grid>
 
         <ListView x:Name="MetaList" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="0,5,0,5" Height="400" MaxHeight="400" Width="500" BorderBrush="Gray" BorderThickness="1" ItemsSource="{x:Bind MetaData}"
                   ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollMode="Enabled" ScrollViewer.IsScrollInertiaEnabled="True">
@@ -56,15 +65,15 @@
         </ListView>
 
         <StackPanel x:Name="EditContainer" Margin="0,5,0,5" Orientation="Horizontal" HorizontalAlignment="Center">
-            <Button x:Name="AddEntry" HorizontalAlignment="Center" Content="New Metapair" Margin="5,5,5,5" FontSize="16" Click="AddEntry_Click"/>
-            <Button x:Name="DeleteEntry" HorizontalAlignment="Center" Content="Delete Metapair" Margin="5,5,5,5" FontSize="16" Click="DeleteEntry_Click"/>
+            <Button x:Name="AddEntry" HorizontalAlignment="Center" Content="New Metapair" Margin="5,5,5,5" FontSize="16" Click="AddEntry_Click" ToolTipService.ToolTip="Add a new metadata entry"/>
+            <Button x:Name="DeleteEntry" HorizontalAlignment="Center" Content="Delete Metapair" Margin="5,5,5,5" FontSize="16" Click="DeleteEntry_Click" ToolTipService.ToolTip="Remove the selected metadata pair"/>
         </StackPanel>
 
         <Image x:Name="ControlDivider" Source="Assets/divider.png" Width="400" MaxHeight="12" Stretch="Fill"/>
 
         <StackPanel x:Name="ControlContainer" Margin="5,10,5,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Orientation="Horizontal">
-            <Button x:Name="Cancel" Margin="10,5,10,5" HorizontalAlignment="Right" VerticalAlignment="Center" Content="Cancel" FontSize="16" Click="Cancel_Click"/>
-            <Button x:Name="Commit" Margin="10,5,10,5" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Commit Changes" FontSize="16" FontWeight="SemiBold" Click="Commit_Click"/>
+            <Button x:Name="Cancel" Margin="10,5,10,5" HorizontalAlignment="Right" VerticalAlignment="Center" Content="Cancel" FontSize="16" Click="Cancel_Click" ToolTipService.ToolTip="Discard any changes and return to the main screen"/>
+            <Button x:Name="Commit" Margin="10,5,10,5" HorizontalAlignment="Left" VerticalAlignment="Center" Content="Commit Changes" FontSize="16" FontWeight="SemiBold" Click="Commit_Click" ToolTipService.ToolTip="Commit changes to naming, path, and metadata"/>
         </StackPanel>
     </StackPanel>
 </Page>

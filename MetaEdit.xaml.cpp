@@ -25,6 +25,11 @@ MetaEdit::MetaEdit()
 	metaSource = ref new Platform::Collections::Vector<MetaPair^>();
 	InitializeComponent();
 
+	pathEditor = ref new FileChooserDialog();
+	pathEditor->Title = "Edit Application Path...";
+	pathEditor->PrimaryButtonText = "Commit Changes";
+	pathEditor->DefaultButton = ContentDialogButton::Primary;
+
 	editingIndex = -1;
 }
 
@@ -69,7 +74,7 @@ void FinalUWP::MetaEdit::OnNavigatedTo(NavigationEventArgs^ e)
 		});
 	}
 
-	EditState->Text = "Editing: " + ref new String((*iter).appName.c_str());
+	EditName->Text = ref new String((*iter).appName.c_str());
 }
 
 
@@ -96,6 +101,7 @@ void FinalUWP::MetaEdit::Commit_Click(Platform::Object^ sender, Windows::UI::Xam
 	std::vector<AppRef>::iterator iter = AppIndex::getList().begin();
 	iter += editingIndex;
 	(*iter).metadata = dest;
+	if (EditName->Text->Length() != 0) (*iter).appName = std::wstring(EditName->Text->Data());
 
 	editingIndex = -1;
 	this->Frame->Navigate(TypeName(FinalUWP::MainPage::typeid));
@@ -110,4 +116,35 @@ void FinalUWP::MetaEdit::AddEntry_Click(Platform::Object^ sender, Windows::UI::X
 void FinalUWP::MetaEdit::DeleteEntry_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e){
 	if (MetaList->SelectedIndex >= 0 && MetaList->SelectedIndex < metaSource->Size)
 		metaSource->RemoveAt(MetaList->SelectedIndex);
+}
+
+
+void FinalUWP::MetaEdit::PathEdit_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	std::vector<AppRef>::iterator iter = AppIndex::getList().begin();
+	iter += editingIndex;
+	AppRef ar = *iter;
+
+	if(ar.absolutePath.find('\\') != std::wstring::npos) 
+		pathEditor->FileNameDisplay = ref new String(ar.absolutePath.substr(ar.absolutePath.find_last_of(L'\\') + 1, ar.absolutePath.length()).c_str());
+
+	pathEditor->ChosenName = EditName->Text;
+
+	TextBox^* tbr = &(this->EditName);
+	FileChooserDialog^* fch = &(this->pathEditor);
+	UINT* itx = &(this->editingIndex);
+	concurrency::create_task(pathEditor->ShowAsync()).then([itx, tbr, fch](ContentDialogResult res) 
+	{
+		if (res == ContentDialogResult::Primary) 
+		{
+			std::vector<AppRef>::iterator iter = AppIndex::getList().begin();
+			iter += (*itx);
+			if ((*fch)->ChosenName->Length() != 0) {
+				(*iter).appName = std::wstring((*fch)->ChosenName->Data());
+				(*tbr)->Text = (*fch)->ChosenName;
+			}
+
+			if ((*fch)->ChosenFile) (*iter).absolutePath = std::wstring((*fch)->ChosenFile->Path->Data());
+		}
+	});
 }

@@ -21,9 +21,15 @@ namespace FinalUWP
 			Windows::Storage::StorageFile^ get() { return chosen; }
 		}
 
+		property Platform::String^ FileNameDisplay
+		{
+			void set(Platform::String^ name) { FilePath->Text = name; }
+		}
+
 		property Platform::String^ ChosenName
 		{
 			Platform::String^ get() { return setName; }
+			void set(Platform::String^ name) { AppName->Text = name; }
 		}
 
 		// Inherited via Clearable

@@ -80,7 +80,7 @@ UINT SecurityManager::deserialize(std::vector<BYTE>& data)
 			if(*(ptr + 1) == 0xFF){
 				AppRef::fromBytes(buffer, &passcode);
 				buffer.clear();
-				ptr += 2;
+				ptr ++;
 			}
 			break;
 		case 0xF6:

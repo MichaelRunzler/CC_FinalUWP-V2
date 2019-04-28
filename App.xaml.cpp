@@ -25,8 +25,9 @@ using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::Storage;
 using namespace Windows::Storage::Streams;
 
-static String^ const SECURITY_FILE = "secPol.bin";
-static String^ const APPLIST_FILE = "appStorage.bin";
+static String^ const SETTINGS_ID = "masterSettings";
+static String^ const SECURITY_ID = "secPol";
+static String^ const APPLIST_ID = "appStorage";
 
 /// <summary>
 /// Initializes the singleton application object.  This is the first line of authored code
@@ -57,15 +58,40 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 
         rootFrame->NavigationFailed += ref new Windows::UI::Xaml::Navigation::NavigationFailedEventHandler(this, &App::OnNavigationFailed);
 
-		StorageFolder^ local = ApplicationData::Current->LocalFolder;
+		ApplicationDataContainer^ localSettings = ApplicationData::Current->LocalSettings;
+		ApplicationDataCompositeValue^ composite = safe_cast<ApplicationDataCompositeValue^>(localSettings->Values->Lookup(SETTINGS_ID));
 
-		readData(local, SECURITY_FILE, [](std::vector<BYTE>* rt) {
-			if (rt->size()) SecurityManager::deserialize(*rt);
-		});
+		if (!composite) {
+			composite = ref new ApplicationDataCompositeValue();
+			composite->Insert(APPLIST_ID, ref new String());
+			composite->Insert(SECURITY_ID, ref new String());
+		}
 
-		readData(local, APPLIST_FILE, [](std::vector<BYTE> * rt) {
-			if (rt->size()) AppIndex::deserialize(*rt);
-		});
+		String^ data = safe_cast<String^>(composite->Lookup(APPLIST_ID));
+		const wchar_t* bytes = data->Data();
+		std::vector<BYTE> vec = std::vector<BYTE>();
+		vec.resize(data->Length(), 0x00);
+
+		std::vector<BYTE>::iterator iter = vec.begin();
+		for (UINT i = 0; i < data->Length(); i++) {
+			*iter = bytes[i];
+			iter++;
+		}
+
+		AppIndex::deserialize(vec);
+
+		data = safe_cast<String^>(composite->Lookup(SECURITY_ID));
+		const wchar_t* bytesS = data->Data();
+		vec.clear();
+		vec.resize(data->Length(), 0x00);
+
+		iter = vec.begin();
+		for (UINT i = 0; i < data->Length(); i++) {
+			*iter = bytesS[i];
+			iter++;
+		}
+
+		SecurityManager::deserialize(vec);
 
         if (e->PrelaunchActivated == false)
         {
@@ -78,11 +104,13 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
             }
             // Place the frame in the current Window
             Window::Current->Content = rootFrame;
+
+			//Windows::UI::ViewManagement::ApplicationView::PreferredLaunchWindowingMode = Windows::UI::ViewManagement::ApplicationViewWindowingMode::FullScreen;
+
             // Ensure the current window is active
             Window::Current->Activate();
         }
-    }
-    else
+    } else
     {
         if (e->PrelaunchActivated == false)
         {
@@ -111,8 +139,25 @@ void App::OnSuspending(Object^ sender, SuspendingEventArgs^ e)
     (void) sender;  // Unused parameter
     (void) e;   // Unused parameter
 
-	writeData(ApplicationData::Current->LocalFolder, APPLIST_FILE, AppIndex::serialize(), []() {});
-	writeData(ApplicationData::Current->LocalFolder, SECURITY_FILE, SecurityManager::serialize(), []() {});
+	ApplicationDataContainer^ localSettings = ApplicationData::Current->LocalSettings;
+
+	std::vector<BYTE> tmpA = AppIndex::serialize();
+	std::vector<BYTE> tmpS = SecurityManager::serialize();
+
+	std::wstring appStr = std::wstring();
+	std::wstring secStr = std::wstring();
+
+	for (BYTE b : tmpA)
+		appStr += (char)b;
+
+	for (BYTE b : tmpS)
+		secStr += (char)b;
+
+	ApplicationDataCompositeValue^ comp = ref new ApplicationDataCompositeValue();
+	comp->Insert(APPLIST_ID, ref new String(appStr.c_str()));
+	comp->Insert(SECURITY_ID, ref new String(secStr.c_str()));
+
+	localSettings->Values->Insert(SETTINGS_ID, comp);
 }
 
 template <typename T>

@@ -370,21 +370,34 @@ void FinalUWP::MainPage::Launch_Click(Platform::Object ^ sender, RoutedEventArgs
 	}
 
 	std::wstring absPath = ar.absolutePath;
+	UINT* sel = new UINT(AppList->SelectedIndex);
+	MainPage^ rpm = this;
 
 	auto folderTask = concurrency::create_task(KnownFolders::DocumentsLibrary->CreateFolderAsync("ARK Software", CreationCollisionOption::OpenIfExists));
-	folderTask.then([absPath](StorageFolder ^ result) 
+	folderTask.then([absPath, rpm, sel](StorageFolder ^ result) 
 	{
 		if (result) 
 		{
 			auto createTask = concurrency::create_task(result->CreateFileAsync("processName.tpc", CreationCollisionOption::ReplaceExisting));
-			createTask.then([absPath](StorageFile ^ result) 
+			createTask.then([absPath, result, rpm, sel](StorageFile ^ resultF) 
 			{
-				if (result) 
+				if (resultF) 
 				{
-					auto writeTask = concurrency::create_task(FileIO::WriteTextAsync(result, ref new String(absPath.c_str())));
-					writeTask.then([]() 
+					auto writeTask = concurrency::create_task(FileIO::WriteTextAsync(resultF, ref new String(absPath.c_str())));
+					writeTask.then([]() -> concurrency::task<void> {
+						return concurrency::create_task(Windows::ApplicationModel::FullTrustProcessLauncher::LaunchFullTrustProcessForCurrentAppAsync("FileAccess"));
+					}).then([result]() -> concurrency::task<StorageFile^> {
+						return concurrency::create_task(result->CreateFileAsync("exitCode.tpc", CreationCollisionOption::OpenIfExists));
+					}).then([rpm, sel](StorageFile^ resCode) 
 					{
-						Windows::ApplicationModel::FullTrustProcessLauncher::LaunchFullTrustProcessForCurrentAppAsync("FileAccess");
+						std::this_thread::sleep_for(std::chrono::milliseconds(250));
+						concurrency::create_task(FileIO::ReadTextAsync(resCode)).then([rpm, sel, resCode](String ^ code){
+							if (code)
+								if (code->Length() > 0 && code == "2")
+									rpm->notifyNoFile(*sel);
+
+							resCode->DeleteAsync();
+						});
 					});
 				}
 			});

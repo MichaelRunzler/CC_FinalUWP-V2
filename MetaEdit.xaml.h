@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "MetaEdit.g.h"
+#include "FileChooserDialog.xaml.h"
 #include "Library/MetaPair.h"
 #include "MainPage.xaml.h"
 
@@ -26,10 +27,12 @@ namespace FinalUWP
 	private:
 		UINT editingIndex;
 		Windows::UI::Xaml::Interop::IBindableVector^ metaSource;
+		FinalUWP::FileChooserDialog^ pathEditor;
 
 		void Cancel_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void Commit_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void AddEntry_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 		void DeleteEntry_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
+		void PathEdit_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e);
 	};
 }
