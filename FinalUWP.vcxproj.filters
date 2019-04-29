@@ -223,6 +223,18 @@
     <Image Include="Assets\x.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\export.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\import.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\export-2.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\import-2.png">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />

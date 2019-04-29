@@ -2,6 +2,10 @@
 #include "include.h"
 #include <stdlib.h>
 
+/// <summary>
+/// Contains name, pathing, and metadata properties for
+/// a single application reference.
+/// </summary>
 class AppRef
 {
 	/*
@@ -38,7 +42,7 @@ public:
 	std::map<std::wstring, std::wstring> metadata;
 
 	AppRef();
-	AppRef(std::wstring name, std::wstring path);
+	AppRef(std::wstring& name, std::wstring& path);
 
 	std::wstring toString();
 	std::wstring* metaToString(size_t* size);
@@ -50,10 +54,10 @@ public:
 	std::vector<BYTE> serialize();
 	static AppRef deserialize(std::vector<BYTE>& data);
 
-	static void toByteStream(std::wstring& input, std::vector<BYTE>::iterator& dest);
-	static void fromBytes(std::vector<BYTE>& src, std::wstring* dest);
-	static void addFlag(std::vector<BYTE>::iterator& ptr, BYTE flag);
-	static bool checkFlag(std::vector<BYTE>::iterator& ptr, BYTE flag);
-	static void fromBytesM(std::vector<BYTE>& src, std::map<std::wstring, std::wstring>& dest);
+	static void toByteStream(const std::wstring& input, std::vector<BYTE>::iterator& dest);
+	static void fromBytes(const std::vector<BYTE>& src, std::wstring* dest);
+	static void addFlag(std::vector<BYTE>::iterator& ptr, const BYTE flag);
+	static bool checkFlag(std::vector<BYTE>::iterator& ptr, const BYTE flag);
+	static void fromBytesM(std::vector<BYTE>& src, std::map<std::wstring, std::wstring>* dest);
 };
 

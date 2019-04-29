@@ -14,13 +14,21 @@
 
     <StackPanel Orientation="Vertical" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,10,0,0">
         <TextBlock x:Name="ErrorDisplay" HorizontalAlignment="Left" Text="" Margin="5,0,0,0" Foreground="Red" Visibility="Collapsed"/>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,0,0">
-            <Button x:Name="ChangePath" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="5,5,10,5" Content="Browse" Click="ChangePath_Click"/>
-            <TextBox x:Name="FilePath" VerticalAlignment="Center" HorizontalAlignment="Stretch" Margin="5,5,5,5" Width="250" IsReadOnly="True" TextWrapping="NoWrap"/>
-        </StackPanel>
-        <StackPanel Orientation="Horizontal"  HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,0,0">
-            <TextBlock x:Name="AppNameTag" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,10,0" Text="Display Name" FontSize="18"/>
-            <TextBox x:Name="AppName" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="5,5,5,5" Width="200" TextWrapping="NoWrap"/>
-        </StackPanel>
+        <Grid x:Name="FileContainer" Width="300" HorizontalAlignment="Stretch" VerticalAlignment="Center" Margin="0,0,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2.75*"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="ChangePath" Grid.Column="0" Margin="5,5,10,5" Content="Browse" Click="ChangePath_Click"/>
+            <TextBox x:Name="FilePath" Grid.Column="1" Margin="5,5,5,5" IsReadOnly="True" TextWrapping="NoWrap"/>
+        </Grid>
+        <Grid x:Name="NameContainer" HorizontalAlignment="Stretch" VerticalAlignment="Center" Width="{Binding ElementName=FileContainer}" Margin="0,0,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="2.5*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="AppNameTag" Grid.Column="0" Margin="10,8,10,0" Text="Display Name" FontSize="18"/>
+            <TextBox x:Name="AppName" Grid.Column="1" Margin="5,5,5,5" TextWrapping="NoWrap"/>
+        </Grid>
     </StackPanel>
 </ContentDialog>

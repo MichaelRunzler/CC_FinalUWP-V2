@@ -29,18 +29,21 @@ FinalUWP::PINPadDialog::PINPadDialog()
 
 void FinalUWP::PINPadDialog::ContentDialog_PrimaryButtonClick(Windows::UI::Xaml::Controls::ContentDialog^ sender, Windows::UI::Xaml::Controls::ContentDialogButtonClickEventArgs^ args)
 {
+	// Abort dialog close if no password was entered and warn the user
 	if(PasswordEntry->Password->IsEmpty())
 	{
 		args->Cancel = TRUE;
 		ErrorDisplay->Text = "Please enter at least 1 digit.";
 		ErrorDisplay->Visibility = Windows::UI::Xaml::Visibility::Visible;
 	}else{
+		// If the password is valid, update the property for it
 		entered = PasswordEntry->Password;
 	}
 }
 
 void FinalUWP::PINPadDialog::ContentDialog_SecondaryButtonClick(Windows::UI::Xaml::Controls::ContentDialog^ sender, Windows::UI::Xaml::Controls::ContentDialogButtonClickEventArgs^ args)
 {
+	// Intentionally left blank
 }
 
 
@@ -86,6 +89,7 @@ void FinalUWP::PINPadDialog::Num0_Click(Platform::Object^ sender, Windows::UI::X
 
 
 void FinalUWP::PINPadDialog::Del_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e){
+	// If there are any characters in the entry field, erase one from the end
 	if(!PasswordEntry->Password->IsEmpty())
 	{
 		std::wstring pass = std::wstring(PasswordEntry->Password->Data());
@@ -102,11 +106,16 @@ void FinalUWP::PINPadDialog::Clear_Click(Platform::Object^ sender, Windows::UI::
 
 void FinalUWP::PINPadDialog::PasswordEntry_PasswordChanged(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
+	// Limit the field to be numeric-only by reacting to changes in its content and erasing any non-numeric entries
+
 	std::wstring pass = std::wstring(PasswordEntry->Password->Data());
-	BOOL foundViolations = FALSE;
+	bool foundViolations = FALSE;
+	// Iterate through each character in the password string, searching for non-numeric characters
 	for (auto ptr = pass.begin(); ptr < pass.end(); ptr++) 
 	{
 		WCHAR c = *ptr;
+		// When a non-numeric digit is found, copy all numeric characters (before AND after)
+		// the violating character, update the field's content with them, and break the loop
 		if(!std::isdigit(c))
 		{
 			foundViolations = TRUE;
@@ -119,12 +128,18 @@ void FinalUWP::PINPadDialog::PasswordEntry_PasswordChanged(Platform::Object^ sen
 		}
 	}
 
+	// Notify the user if any violations are found
 	if (foundViolations) {
 		ErrorDisplay->Text = "Only numeric digits are allowed.";
 		ErrorDisplay->Visibility = Windows::UI::Xaml::Visibility::Visible;
 	}
 }
 
+/// <summary>
+/// Clears all fields and stored data in this dialog,
+/// resetting it as if it were reinitialized.
+/// Implementation of Clearable::Clear()
+/// </summary>
 void FinalUWP::PINPadDialog::Clear()
 {
 	PasswordEntry->Password = "";

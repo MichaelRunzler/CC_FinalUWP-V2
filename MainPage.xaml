@@ -28,10 +28,10 @@
                         <Setter Target="DetailVDivider.Visibility" Value="Visible"/>
                         <Setter Target="AppList.Width" Value="400"/>
                         <Setter Target="DetailList.Width" Value="400"/>
-                        <Setter Target="AppList.Height" Value="250"/>
-                        <Setter Target="DetailList.Height" Value="250"/>
-                        <Setter Target="AppList.MaxHeight" Value="250"/>
-                        <Setter Target="DetailList.MaxHeight" Value="250"/>
+                        <Setter Target="AppList.Height" Value="350"/>
+                        <Setter Target="DetailList.Height" Value="350"/>
+                        <Setter Target="AppList.MaxHeight" Value="350"/>
+                        <Setter Target="DetailList.MaxHeight" Value="350"/>
                         <Setter Target="AppList.BorderThickness" Value="2"/>
                         <Setter Target="DetailList.BorderThickness" Value="2"/>
                     </VisualState.Setters>
@@ -88,13 +88,13 @@
 
         <StackPanel x:Name="AppListContainer" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Stretch">
             <TextBlock x:Name="AppListHeader" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Available Apps" FontSize="24"/>
-            <ListView x:Name="AppList" Width="400" Height="250" MaxHeight="250" Margin="0,0,0,0" HorizontalAlignment="Center" SelectionChanged="AppList_SelectionChanged" KeyUp="AppList_KeyUp" BorderBrush="LightSkyBlue" BorderThickness="2"
-                      ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollMode="Enabled" ScrollViewer.IsScrollInertiaEnabled="True"/>
-            <Button x:Name="Launch" Width="300" Margin="0,10,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="Launch_Click" FontSize="16" FontWeight="SemiBold"  Content="Launch App"/>
+            <ListView x:Name="AppList" Width="400" Height="350" MaxHeight="350" Margin="0,0,0,0" HorizontalAlignment="Center" SelectionChanged="AppList_SelectionChanged" KeyUp="AppList_KeyUp" BorderBrush="LightSkyBlue" BorderThickness="2"
+                      ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollMode="Enabled" ScrollViewer.IsScrollInertiaEnabled="True" ItemsSource="{x:Bind AppSource}"/>
+            <Button x:Name="Launch" Width="300" Margin="0,10,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="Launch_Click" FontSize="16" FontWeight="SemiBold"  Content="Launch App" ToolTipService.ToolTip="Launch the selected application!"/>
             <Image x:Name="AppListDivider" Source="/Assets/divider.png" Stretch="Fill" MaxHeight="12" Visibility="Collapsed"/>
         </StackPanel>
 
-        <Image x:Name="AppListVDivider" Source="/Assets/divider_90.png" Margin="0,10,0,0" Stretch="Fill" MaxWidth="12" Height="340" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        <Image x:Name="AppListVDivider" Source="/Assets/divider_90.png" Margin="0,10,0,0" Stretch="Fill" MaxWidth="12" Height="440" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 
         <StackPanel x:Name="ControlParentContainer" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top">
             <StackPanel x:Name="ListControlContainer" Margin="20,10,20,10" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top">
@@ -124,18 +124,24 @@
                 <Button x:Name="Reset" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="40" Width="40" Click="Reset_Click" ToolTipService.ToolTip="Reset All Settings to Defaults">
                     <Image Source="/Assets/reset.png" Stretch="Fill" MaxHeight="40" MaxWidth="40"/>
                 </Button>
+                <Button x:Name="ExportSettings" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="40" Width="40" Click="ExportSettings_Click" ToolTipService.ToolTip="Export a backup of your current settings">
+                    <Image Source="/Assets/export-2.png" Stretch="Fill" MaxHeight="40" MaxWidth="40"/>
+                </Button>
+                <Button x:Name="ImportSettings" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="40" Width="40" Click="ImportSettings_Click" ToolTipService.ToolTip="Load previously backed up settings">
+                    <Image Source="/Assets/import-2.png" Stretch="Fill" MaxHeight="40" MaxWidth="40"/>
+                </Button>
             </StackPanel>
         </StackPanel>
 
-        <Image x:Name="DetailVDivider" Source="/Assets/divider_90.png" Margin="0,10,0,0" Stretch="Fill" MaxWidth="12" Height="340" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        <Image x:Name="DetailVDivider" Source="/Assets/divider_90.png" Margin="0,10,0,0" Stretch="Fill" MaxWidth="12" Height="440" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 
         <StackPanel x:Name="DetailContainer" Margin="10,10,10,10" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top">
             <Image x:Name="DetailDivider" Source="/Assets/divider.png" Stretch="Fill" MaxHeight="12" Visibility="Collapsed"/>
             <TextBlock x:Name="DetailHeader" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Top" Text="Details" FontSize="24"/>
-            <ListView x:Name="DetailList" Width="400" Height="250" MaxHeight="250" Margin="0,0,0,0" HorizontalAlignment="Center" SelectionMode="None" BorderBrush="LightSkyBlue" BorderThickness="2" 
+            <ListView x:Name="DetailList" Width="400" Height="350" MaxHeight="350" Margin="0,0,0,0" HorizontalAlignment="Center" SelectionMode="None" BorderBrush="LightSkyBlue" BorderThickness="2" 
                       ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollMode="Enabled" 
-                      ScrollViewer.IsScrollInertiaEnabled="True"/>
-            <Button x:Name="EditMetadata" Width="300" Margin="0, 10, 0, 10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="EditMetadata_Click" FontSize="16" Content="Edit Metadata..."/>
+                      ScrollViewer.IsScrollInertiaEnabled="True" ItemsSource="{x:Bind MetaSource}"/>
+            <Button x:Name="EditMetadata" Width="300" Margin="0, 10, 0, 10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="EditMetadata_Click" FontSize="16" Content="Edit Metadata..." ToolTipService.ToolTip="Edit the detailed metadata for this reference"/>
         </StackPanel>
 
     </StackPanel>

@@ -25,6 +25,8 @@ using namespace Windows::UI::Xaml::Navigation;
 using namespace Windows::Storage;
 using namespace Windows::Storage::Streams;
 
+// Constants for local settings keys
+
 static String^ const SETTINGS_ID = "masterSettings";
 static String^ const SECURITY_ID = "secPol";
 static String^ const APPLIST_ID = "appStorage";
@@ -44,7 +46,7 @@ App::App()
 /// will be used such as when the application is launched to open a specific file.
 /// </summary>
 /// <param name="e">Details about the launch request and process.</param>
-void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEventArgs^ e)
+void App::OnLaunched(LaunchActivatedEventArgs^ e)
 {
     auto rootFrame = dynamic_cast<Frame^>(Window::Current->Content);
 
@@ -56,29 +58,48 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
         // a SuspensionManager key
         rootFrame = ref new Frame();
 
-        rootFrame->NavigationFailed += ref new Windows::UI::Xaml::Navigation::NavigationFailedEventHandler(this, &App::OnNavigationFailed);
+        rootFrame->NavigationFailed += ref new NavigationFailedEventHandler(this, &App::OnNavigationFailed);
+
+		//
+		// APP STATE LOADER
+		//
+
+		// Load appdata settings repository and attempt to load keys for security and app reference data
 
 		ApplicationDataContainer^ localSettings = ApplicationData::Current->LocalSettings;
 		ApplicationDataCompositeValue^ composite = safe_cast<ApplicationDataCompositeValue^>(localSettings->Values->Lookup(SETTINGS_ID));
 
+		// Load empty keys into the settings stream if the master settings key is empty
 		if (!composite) {
 			composite = ref new ApplicationDataCompositeValue();
 			composite->Insert(APPLIST_ID, ref new String());
 			composite->Insert(SECURITY_ID, ref new String());
 		}
 
-		String^ data = safe_cast<String^>(composite->Lookup(APPLIST_ID));
-		const wchar_t* bytes = data->Data();
-		std::vector<BYTE> vec = std::vector<BYTE>();
-		vec.resize(data->Length(), 0x00);
+		// TODO Check if a null value on one of the data strings causes a crash
 
+		// Load app list data into a String.
+		// The actual datastream is binary, but it has to be stored as a String due
+		// to restrictions imposed by the ApplicationDataStore.
+		String^ data = safe_cast<String^>(composite->Lookup(APPLIST_ID));
+		const wchar_t* bytes = data->Data(); // Extract char array from string
+		std::vector<BYTE> vec = std::vector<BYTE>(); // Initialize target bytestream container
+		vec.resize(data->Length(), 0x00); // Presize vector container
+
+		// Copy characters from the array to the buffer, truncating to 8 bits from 16.
+		// The byte that's truncated should always be zero, since the data values going
+		// in when saved are always < 256.
 		std::vector<BYTE>::iterator iter = vec.begin();
 		for (UINT i = 0; i < data->Length(); i++) {
-			*iter = bytes[i];
+			*iter = (BYTE)bytes[i];
 			iter++;
 		}
 
+		// Pass bytestream to the app index for deserialization,
+		// it will gracefully deal with any errors.
 		AppIndex::deserialize(vec);
+
+		// Repeat process for the security database
 
 		data = safe_cast<String^>(composite->Lookup(SECURITY_ID));
 		const wchar_t* bytesS = data->Data();
@@ -87,11 +108,15 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
 
 		iter = vec.begin();
 		for (UINT i = 0; i < data->Length(); i++) {
-			*iter = bytesS[i];
+			*iter = (BYTE)bytesS[i];
 			iter++;
 		}
 
 		SecurityManager::deserialize(vec);
+
+		//
+		// END STATE LOADER
+		//
 
         if (e->PrelaunchActivated == false)
         {
@@ -127,6 +152,7 @@ void App::OnLaunched(Windows::ApplicationModel::Activation::LaunchActivatedEvent
     }
 }
 
+
 /// <summary>
 /// Invoked when application execution is being suspended.  Application state is saved
 /// without knowing whether the application will be terminated or resumed with the contents
@@ -139,120 +165,47 @@ void App::OnSuspending(Object^ sender, SuspendingEventArgs^ e)
     (void) sender;  // Unused parameter
     (void) e;   // Unused parameter
 
+	// Load appdata settings repository
+
 	ApplicationDataContainer^ localSettings = ApplicationData::Current->LocalSettings;
 
+	// Data values cannot be stored as binary streams in the settings
+	// repository, so we must convert them to Unicode strings first.
+
+	// Serialize states for the app index and security manager
 	std::vector<BYTE> tmpA = AppIndex::serialize();
 	std::vector<BYTE> tmpS = SecurityManager::serialize();
 
+	// Initialize empty intermediary string containers for conversion
 	std::wstring appStr = std::wstring();
 	std::wstring secStr = std::wstring();
 
+	// Convert each byte into a UTF-16 multibyte character representation
+	// of its value via a simple expansion cast
 	for (BYTE b : tmpA)
 		appStr += (char)b;
 
+	// Repeat for the other datastream
 	for (BYTE b : tmpS)
 		secStr += (char)b;
 
+	// Store converted values as Platform::Strings into the settings repository under
+	// their own subkeys
 	ApplicationDataCompositeValue^ comp = ref new ApplicationDataCompositeValue();
 	comp->Insert(APPLIST_ID, ref new String(appStr.c_str()));
 	comp->Insert(SECURITY_ID, ref new String(secStr.c_str()));
 
+	// Push new keys to the repository
 	localSettings->Values->Insert(SETTINGS_ID, comp);
 }
 
-template <typename T>
-void FinalUWP::App::writeData(StorageFolder^ parent, String^ name, std::vector<BYTE>& data, T&& lambda)
-{
-	// Create file (overwrite if existing)
-	auto task = concurrency::create_task(parent->CreateFileAsync(name, CreationCollisionOption::ReplaceExisting));
-
-	task.then([](StorageFile ^ file) -> concurrency::task<IRandomAccessStream^>
-	{
-		// Obtain handle to file's data stream
-		return concurrency::create_task(file->OpenAsync(FileAccessMode::ReadWrite));
-	}).then([data, &lambda](IRandomAccessStream^ stream)
-	{
-		DataWriter^ dw = ref new DataWriter(stream); // Create data writer object, attach to stream
-
-		// Copy data from vector to write buffer
-		for (auto iter = data.begin(); iter < data.end(); iter++) dw->WriteByte(*iter);
-
-		// Commit stream buffer to disk
-		concurrency::create_task(dw->StoreAsync()).then([dw, stream](UINT l) 
-		{
-			// Close the writer object and its associated stream
-			dw->DetachStream();
-			delete dw;
-			delete stream;
-		}).then([&lambda](concurrency::task<void> t) {
-			lambda();
-		});
-	});
-}
-
-template <typename T>
-void FinalUWP::App::readData(StorageFolder^ parent, String^ name, UINT start, UINT len, T&& lambda)
-{
-	// Obtain handle to existing file if there is one, create a new file if not
-	concurrency::create_task(parent->CreateFileAsync(name, CreationCollisionOption::OpenIfExists))
-	.then([](StorageFile ^ file) -> concurrency::task<IRandomAccessStream^>
-	{
-		// If the specified name is a directory, the operation fails
-		if ((file->Attributes & FileAttributes::Directory) == FileAttributes::Directory) {
-			SetLastError(ERROR_DIRECTORY_NOT_SUPPORTED);
-			throw 1;
-		}
-
-		// Obtain handle to file's data stream
-		return concurrency::create_task(file->OpenAsync(FileAccessMode::Read));
-	}).then([start, len, &lambda](IRandomAccessStream^ stream)
-	{
-		// Ensure that the stream is at the correct offset before reading
-		stream->Seek(start);
-
-		// If the stream cannot be read, the operation fails
-		if (!stream->CanRead) {
-			SetLastError(ERROR_ACCESS_DENIED);
-			throw -1;
-		}
-
-		DataReader^ dr = ref new DataReader(stream); // Create data writer object, attach to stream
-		size_t size = len == 0 || len > stream->Size ? stream->Size : len; // Determine number of bytes to be read
-		concurrency::create_task(dr->LoadAsync(size)).then([dr, stream, size, &lambda](UINT l)
-		{
-			std::vector<BYTE>* dest = new std::vector<BYTE>();
-			// If the stream size is 0, the file is empty (perhaps because it has just been created by this routine),
-			// return with the current buffer intact.
-			if (l > 0)
-			{
-				// Copy data from stream buffer to destination vector
-				dest->resize(size); // Preallocate vector capacity for faster copy
-									 // Also guarantees that reallocation will not invalidate active pointers
-				for (auto ptr = dest->begin(); ptr < dest->end(); ptr++) *ptr = dr->ReadByte();
-			}
-
-			// Close reader and associated stream
-			dr->DetachStream();
-			delete dr;
-			delete stream;
-			lambda(dest);
-		});
-	});
-
-
-}
-
-template <typename T>
-void FinalUWP::App::readData(StorageFolder^ parent, String^ name, T&& lambda){
-	readData(parent, name, 0, 0, lambda);
-}
 
 /// <summary>
 /// Invoked when Navigation to a certain page fails
 /// </summary>
 /// <param name="sender">The Frame which failed navigation</param>
 /// <param name="e">Details about the navigation failure</param>
-void App::OnNavigationFailed(Platform::Object ^sender, Windows::UI::Xaml::Navigation::NavigationFailedEventArgs ^e)
+void App::OnNavigationFailed(Platform::Object ^sender, NavigationFailedEventArgs ^e)
 {
     throw ref new FailureException("Failed to load Page " + e->SourcePageType.Name);
 }

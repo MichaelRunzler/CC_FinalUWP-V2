@@ -19,6 +19,7 @@
                         <Setter Target="MetaList.Width" Value="500"/>
                         <Setter Target="MetaList.Height" Value="400"/>
                         <Setter Target="MetaList.MaxHeight" Value="400"/>
+                        <Setter Target="ControlDivider.Width" Value="400"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="narrow">
@@ -29,15 +30,16 @@
                         <Setter Target="MetaList.Width" Value="300"/>
                         <Setter Target="MetaList.Height" Value="350"/>
                         <Setter Target="MetaList.MaxHeight" Value="350"/>
+                        <Setter Target="ControlDivider.Width" Value="300"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
         <TextBlock x:Name="Title" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="5,5,5,10" Text="Metadata Editor" FontSize="24"/>
-        <Grid HorizontalAlignment="Center" MinWidth="250">
+        <Grid HorizontalAlignment="Center" Width="300">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="1.5*"/>
                 <ColumnDefinition Width="4*"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>

@@ -25,13 +25,13 @@ using namespace Windows::Storage::Pickers;
 FinalUWP::FileChooserDialog::FileChooserDialog()
 {
 	InitializeComponent();
-	setName = "";
 }
-
 
 
 void FinalUWP::FileChooserDialog::ContentDialog_PrimaryButtonClick(ContentDialog^ sender, ContentDialogButtonClickEventArgs^ args)
 {
+	// Abort close and show error if one or both fields are empty
+
 	if(&chosen == NULL || FilePath->Text->IsEmpty()){
 		args->Cancel = TRUE;
 		ErrorDisplay->Text = "Please select a file.";
@@ -40,8 +40,6 @@ void FinalUWP::FileChooserDialog::ContentDialog_PrimaryButtonClick(ContentDialog
 		args->Cancel = TRUE;
 		ErrorDisplay->Text = "Please set a name.";
 		ErrorDisplay->Visibility = Windows::UI::Xaml::Visibility::Visible;
-	}else{
-		setName = AppName->Text;
 	}
 }
 
@@ -53,6 +51,7 @@ void FinalUWP::FileChooserDialog::ContentDialog_SecondaryButtonClick(ContentDial
 
 void FinalUWP::FileChooserDialog::ChangePath_Click(Object^ sender, RoutedEventArgs^ e)
 {
+	// Load and display the file picker
 	auto picker = ref new FileOpenPicker();
 	picker->ViewMode = PickerViewMode::List;
 	picker->SuggestedStartLocation = PickerLocationId::ComputerFolder;
@@ -60,13 +59,14 @@ void FinalUWP::FileChooserDialog::ChangePath_Click(Object^ sender, RoutedEventAr
 	picker->FileTypeFilter->Append(".exe");
 	picker->FileTypeFilter->Append(".jnlp");
 
-	// Get pointers to class fields so that they may be passed as reference-mode lambda captures
+	// Get pointers to class fields so that they may be passed as copy-mode lambda captures
 	StorageFile^* rcf = &chosen;
 	TextBox^* rcb = &FilePath;
 	TextBox^* rcn = &AppName;
 
 	auto task = concurrency::create_task(picker->PickSingleFileAsync());
 	task.then([rcf, rcb, rcn](StorageFile^ file){
+		// Only set values if the user did not click Cancel
 		if (file) {
 			*rcf = file;
 			(*rcb)->Text = file->Name;
@@ -76,15 +76,14 @@ void FinalUWP::FileChooserDialog::ChangePath_Click(Object^ sender, RoutedEventAr
 }
 
 
-void FinalUWP::FileChooserDialog::ChangePath_Tapped(Platform::Object^ sender, Windows::UI::Xaml::Input::TappedRoutedEventArgs^ e)
-{
-
-}
-
+/// <summary>
+/// Clears all fields and stored data in this dialog,
+/// resetting it as if it were reinitialized.
+/// Implementation of Clearable::Clear()
+/// </summary>
 void FinalUWP::FileChooserDialog::Clear()
 {
 	ErrorDisplay->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 	FilePath->Text = "";
 	AppName->Text = "";
-	setName = "";
 }

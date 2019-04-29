@@ -46,6 +46,8 @@
       <Extensions>
         <desktop:Extension Category="windows.fullTrustProcess" Executable="UWPProcessLauncher.exe">
           <desktop:FullTrustProcess>
+            <desktop:ParameterGroup GroupId="Backup" Parameters="/file &quot;%HomeDrive%%HomePath%\Documents\ARK Software\processName.tpc&quot; /backup"/>
+            <desktop:ParameterGroup GroupId="Restore" Parameters="/file &quot;%HomeDrive%%HomePath%\Documents\ARK Software\processName.tpc&quot; /restore"/>
             <desktop:ParameterGroup GroupId="FileAccess" Parameters="/file &quot;%HomeDrive%%HomePath%\Documents\ARK Software\processName.tpc&quot; /log &quot;%HomeDrive%%HomePath%\Documents\ARK Software\exitCode.tpc&quot;"/>
           </desktop:FullTrustProcess>
         </desktop:Extension>

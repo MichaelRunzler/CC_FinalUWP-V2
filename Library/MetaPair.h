@@ -2,6 +2,10 @@
 
 namespace FinalUWP 
 {
+	/// <summary>
+	/// Bindable C++/CX equivalent of a Platform::String-only C++ std::pair.
+	/// Stores a key-value pair and provides access via properties.
+	/// </summary>
 	public ref class MetaPair sealed
 	{
 	public:

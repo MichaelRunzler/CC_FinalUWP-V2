@@ -229,6 +229,10 @@
     <Image Include="Assets\divider.png" />
     <Image Include="Assets\divider_90.png" />
     <Image Include="Assets\dn_arrow.png" />
+    <Image Include="Assets\export-2.png" />
+    <Image Include="Assets\export.png" />
+    <Image Include="Assets\import-2.png" />
+    <Image Include="Assets\import.png" />
     <Image Include="Assets\LargeTile.scale-100.png" />
     <Image Include="Assets\LargeTile.scale-125.png" />
     <Image Include="Assets\LargeTile.scale-150.png" />

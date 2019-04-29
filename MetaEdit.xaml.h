@@ -8,7 +8,8 @@
 namespace FinalUWP
 {
 	/// <summary>
-	/// An empty page that can be used on its own or navigated to within a Frame.
+	/// Allows viewing and editing of metadata, naming, and path 
+	/// information for an application reference entry.
 	/// </summary>
 	[Windows::Foundation::Metadata::WebHostHidden]
 	public ref class MetaEdit sealed
@@ -16,7 +17,13 @@ namespace FinalUWP
 	public:
 		MetaEdit();
 
-		property Windows::UI::Xaml::Interop::IBindableVector^ MetaData {
+		/// <summary>
+		/// An IBindableVector collection of MetaPair elements, made accessible
+		/// for binding purposes.
+		/// Read/write access.
+		/// </summary>
+		property Windows::UI::Xaml::Interop::IBindableVector^ MetaData 
+		{
 			Windows::UI::Xaml::Interop::IBindableVector^ get() { return metaSource; }
 			void set(Windows::UI::Xaml::Interop::IBindableVector^ newVal) { this->metaSource = newVal; }
 		}
@@ -25,7 +32,9 @@ namespace FinalUWP
 		void OnNavigatedTo(Windows::UI::Xaml::Navigation::NavigationEventArgs^ e) override;
 
 	private:
+		// State storage fields
 		UINT editingIndex;
+		std::wstring modifiedPath;
 		Windows::UI::Xaml::Interop::IBindableVector^ metaSource;
 		FinalUWP::FileChooserDialog^ pathEditor;
 
