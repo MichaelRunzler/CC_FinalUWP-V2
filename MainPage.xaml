@@ -70,6 +70,8 @@
                         <Setter Target="RemoveApp.Visibility" Value="Visible"/>
                         <Setter Target="EditMetadata.Visibility" Value="Visible"/>
                         <Setter Target="Reset.Visibility" Value="Visible"/>
+                        <Setter Target="ExportSettings.Visibility" Value="Visible"/>
+                        <Setter Target="ImportSettings.Visibility" Value="Visible"/>
                         <Setter Target="LockImage.Source" Value="/Assets/lock.png"/>
                     </VisualState.Setters>
                 </VisualState>
@@ -80,6 +82,8 @@
                         <Setter Target="RemoveApp.Visibility" Value="Collapsed"/>
                         <Setter Target="EditMetadata.Visibility" Value="Collapsed"/>
                         <Setter Target="Reset.Visibility" Value="Collapsed"/>
+                        <Setter Target="ExportSettings.Visibility" Value="Collapsed"/>
+                        <Setter Target="ImportSettings.Visibility" Value="Collapsed"/>
                         <Setter Target="LockImage.Source" Value="/Assets/unlock.png"/>
                     </VisualState.Setters>
                 </VisualState>

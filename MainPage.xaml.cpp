@@ -365,11 +365,119 @@ void FinalUWP::MainPage::Launch_Click(Platform::Object ^ sender, RoutedEventArgs
 	// Ensure that selection is within bounds
 	if (AppList->SelectedIndex < 0 || AppList->SelectedIndex >= AppList->Items->Size) return;
 
+	// Ensure that the launcher subroutine is ready to go
+	if (!CheckLaunchRequirements()) return;
+
 	// Retrieve reference to selected AppRef. If the path is empty, it's likely that the selection
 	// was out-of-bounds for the index, return without error.
 	AppRef ar = AppIndex::getAt(AppList->SelectedIndex);
 	if (ar.absolutePath == std::wstring()) return;
 
+	// Delegate down to the subroutine function in EXECUTE mode
+	RunWin32Subroutine(0, ref new String(ar.absolutePath.c_str()));
+}
+
+
+void FinalUWP::MainPage::ExportSettings_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	// Ensure that the launcher subroutine is ready to go
+	if (!CheckLaunchRequirements()) return;
+
+	// Confirm with the user before proceeding
+	ContentDialog^ confirm = ref new ContentDialog();
+	confirm->Title = "Confirm Export";
+	confirm->Content = "This will copy all current application references, security data, and preferences into the target file. The app will close once this is complete. Do you wish to proceed?";
+	confirm->PrimaryButtonText = "Yes";
+	confirm->CloseButtonText = "No";
+	confirm->DefaultButton = ContentDialogButton::Close;
+
+	MainPage^ rpm = this;
+
+	auto task = concurrency::create_task(confirm->ShowAsync());
+	task.then([rpm](ContentDialogResult res)
+		{
+			if (res != ContentDialogResult::Primary) return;
+
+			// Initialize file selector
+			Pickers::FileSavePicker ^ fs = ref new Pickers::FileSavePicker();
+			fs->DefaultFileExtension = ".dat";
+			fs->SuggestedFileName = "backup";
+			Platform::Collections::Vector<String^> ^ vec = ref new Platform::Collections::Vector<String^>();
+			vec->Append(".dat");
+			vec->Append(".bin");
+			fs->FileTypeChoices->Insert("UWP App Data Backup", vec);
+			fs->SuggestedStartLocation = Pickers::PickerLocationId::Downloads;
+
+			// Derive settings.dat path from local folder variable
+			std::wstring settingsPath = std::wstring(ApplicationData::Current->LocalFolder->Path->Data());
+			settingsPath = settingsPath.substr(0, settingsPath.find_last_of('\\') + 1);
+			settingsPath += L"Settings\\settings.dat";
+			String ^ path = ref new String(settingsPath.c_str());
+
+			// Show file selector
+			auto pickTask = concurrency::create_task(fs->PickSaveFileAsync());
+			pickTask.then([path, rpm](StorageFile ^ target) {
+				if (!target) return;
+				// Delegate to subroutine launch chain task in BACKUP mode
+				rpm->RunWin32Subroutine(1, target->Path + "\r\n" + path);
+				});
+		});
+}
+
+
+void FinalUWP::MainPage::ImportSettings_Click(Platform::Object ^ sender, Windows::UI::Xaml::RoutedEventArgs ^ e)
+{
+	// Ensure that the launcher subroutine is ready to go
+	if (!CheckLaunchRequirements()) return;
+
+	// Confirm with the user before proceeding
+	ContentDialog^ confirm = ref new ContentDialog();
+	confirm->Title = "Confirm Import";
+	confirm->Content = "This will replace all current application references, security data, and preferences with the data in the chosen backup file. The app will close once this is complete. Do you wish to proceed?";
+	confirm->PrimaryButtonText = "Yes";
+	confirm->CloseButtonText = "No";
+	confirm->DefaultButton = ContentDialogButton::Close;
+
+	MainPage^ rpm = this;
+
+	auto task = concurrency::create_task(confirm->ShowAsync());
+	task.then([rpm](ContentDialogResult res)
+		{
+			if (res != ContentDialogResult::Primary) return;
+
+			// Initialize file selector
+			Pickers::FileOpenPicker ^ fs = ref new Pickers::FileOpenPicker();
+			fs->FileTypeFilter->Append(".dat");
+			fs->FileTypeFilter->Append(".bin");
+			fs->FileTypeFilter->Append(".bak");
+			fs->SuggestedStartLocation = Pickers::PickerLocationId::Downloads;
+
+			// Derive settings.dat path from local folder variable
+			std::wstring settingsPath = std::wstring(ApplicationData::Current->LocalFolder->Path->Data());
+			settingsPath = settingsPath.substr(0, settingsPath.find_last_of('\\') + 1);
+			settingsPath += L"Settings\\settings.dat";
+			String ^ path = ref new String(settingsPath.c_str());
+
+			// Show file selector
+			auto pickTask = concurrency::create_task(fs->PickSingleFileAsync());
+			pickTask.then([path, rpm](StorageFile ^ target) {
+				if (!target) return;
+				// Delegate to subroutine launch chain task in RESTORE mode
+				rpm->RunWin32Subroutine(2, target->Path + "\r\n" + path);
+				});
+		});
+}
+
+
+/// <summary>
+/// Checks to ensure that all files and assemblies required to
+/// launch the built-in Win32 subroutine are in place.
+/// Returns TRUE if all requirements are met, returns FALSE and notifies the user if
+/// one or more requirements are not met.
+/// </summary>
+/// <returns type="bool">TRUE if the subroutine can be safely launched, FALSE if not.</returns>
+bool FinalUWP::MainPage::CheckLaunchRequirements()
+{
 	bool canLaunch = TRUE;
 	String^ errorText = "";
 
@@ -377,13 +485,14 @@ void FinalUWP::MainPage::Launch_Click(Platform::Object ^ sender, RoutedEventArgs
 	if (!Windows::Foundation::Metadata::ApiInformation::IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0)) {
 		canLaunch = FALSE;
 		errorText = "It appears that you are running this application on a system which does not support the Windows 10 Full-Trust Process API, such as Windows 10 S. Apps will not launch until this is resolved.";
-	}else if (!hasLauncher) {
+	}
+	else if (!hasLauncher) {
 		canLaunch = FALSE;
 		errorText = "The master application launcher executable (UWPProcessLauncher.exe) appears to be missing from the application package. Please perform a clean re-install of the AppX package.";
 	}
 
 	// If one or more critical requirements are not met, notify the user (dependent on state) and return
-	if (!canLaunch) 
+	if (!canLaunch)
 	{
 		ContentDialog^ unavail = ref new ContentDialog();
 		unavail->Title = "Unable to Launch App";
@@ -391,11 +500,37 @@ void FinalUWP::MainPage::Launch_Click(Platform::Object ^ sender, RoutedEventArgs
 		unavail->Content = SecurityManager::checkState() ? errorText : "An error has occurred. Please contact your administrator for details. We apologize for the inconvenience.";
 		unavail->DefaultButton = ContentDialogButton::Close;
 		unavail->ShowAsync();
-		return;
+	}
+
+	return canLaunch;
+}
+
+
+/// <summary>
+/// Launches the built-in Win32 extra-sandbox subroutine in the specified mode,
+/// writing the provided data to the trans-process communications file before launching.
+/// BACKUP (1) and RESTORE (2) modes will result in an app exit on completion.
+/// </summary>
+/// <param name="actionID">The set of arguments to pass to the subroutine executable.
+///						   0 is EXECUTE, 1 is BACKUP, 2 is RESTORE.</param>
+/// <param name="targetPath">The information to write to the trans-process communications file that
+///							 the subroutine reads.</param>
+void FinalUWP::MainPage::RunWin32Subroutine(byte actionID, String^ targetPath)
+{
+	String^ groupID = "FileAccess";
+	String^ taskInfo = "";
+	bool bRF = false;
+
+	if (actionID == 1) {
+		groupID = "Backup";
+		bRF = true;
+	}
+	else if (actionID == 2) {
+		groupID = "Restore";
+		bRF = true;
 	}
 
 	// Collect information to be passed to lambda task chain
-	std::wstring absPath = ar.absolutePath;
 	UINT* sel = new UINT(AppList->SelectedIndex);
 	MainPage^ rpm = this;
 
@@ -403,60 +538,55 @@ void FinalUWP::MainPage::Launch_Click(Platform::Object ^ sender, RoutedEventArgs
 	/// STEEL YOURSELVES, MY BROTHERS
 	// Create or open the cross-thread communications root folder in the user's Documents library
 	auto folderTask = concurrency::create_task(KnownFolders::DocumentsLibrary->CreateFolderAsync("ARK Software", CreationCollisionOption::OpenIfExists));
-	folderTask.then([absPath, rpm, sel](StorageFolder ^ result) 
+	folderTask.then([targetPath, groupID, rpm, sel, bRF](StorageFolder ^ result)
 	{
 		// Only proceed if the folder was created/opened successfully
-		if (result) 
+		if (!result) return;
+
+		// Create/overwrite the process-name storage file
+		auto createTask = concurrency::create_task(result->CreateFileAsync("processName.tpc", CreationCollisionOption::ReplaceExisting));
+		createTask.then([targetPath, result, groupID, rpm, sel, bRF](StorageFile ^ resultF)
 		{
-			// Create/overwrite the process-name storage file
-			auto createTask = concurrency::create_task(result->CreateFileAsync("processName.tpc", CreationCollisionOption::ReplaceExisting));
-			createTask.then([absPath, result, rpm, sel](StorageFile ^ resultF) 
+			// Only proceed if the file was created successfully
+			if (!resultF) return;
+					
+			// Write the process name data to the file
+			auto writeTask = concurrency::create_task(FileIO::WriteTextAsync(resultF, targetPath));
+			writeTask.then([groupID]() -> concurrency::task<void>
 			{
-				// Only proceed if the file was created successfully
-				if (resultF) 
-				{
-					// Write the process name data to the file
-					auto writeTask = concurrency::create_task(FileIO::WriteTextAsync(resultF, ref new String(absPath.c_str())));
-					writeTask.then([]() -> concurrency::task<void> {
-						// Activate the Win32 subroutine process via the FullTrustProcessLauncher component
-						return concurrency::create_task(Windows::ApplicationModel::FullTrustProcessLauncher::LaunchFullTrustProcessForCurrentAppAsync("FileAccess"));
-					}).then([result]() -> concurrency::task<StorageFile^> {
-						// Create the target file for the subroutine to write its exit code to
-						return concurrency::create_task(result->CreateFileAsync("exitCode.tpc", CreationCollisionOption::OpenIfExists));
-					}).then([rpm, sel, resultF](StorageFile^ resCode) 
-					{
-						// Sleep for 250ms to allow the subroutine time to finish its work and write its exit code
-						std::this_thread::sleep_for(std::chrono::milliseconds(250));
-						// Read the exit code from the target file
-						concurrency::create_task(FileIO::ReadTextAsync(resCode)).then([rpm, sel, resCode, resultF](String ^ code){
-							// If the launcher wrote a code, check it
-							if (code)
-								// If the code is 0x02 (FILE_NOT_FOUND), the reference is probably not valid anymore, give the user
-								// the option to remove it
-								if (code->Length() > 0 && code == "2")
-									rpm->notifyNoFile(*sel);
-
-							// Remove the result code and process name files since they are no longer needed
-							resCode->DeleteAsync();
-							resultF->DeleteAsync();
-							/// Hi, Joe. Enjoying the asyncness? ;)
-						});
-					});
+				// Activate the Win32 subroutine process via the FullTrustProcessLauncher component
+				return concurrency::create_task(Windows::ApplicationModel::FullTrustProcessLauncher::LaunchFullTrustProcessForCurrentAppAsync(groupID));
+			}).then([result, bRF]() -> concurrency::task<StorageFile^> 
+			{
+				// Open the subroutine's exit code file
+				return concurrency::create_task(result->CreateFileAsync("exitCode.tpc", CreationCollisionOption::OpenIfExists));
+			}).then([rpm, sel, bRF, resultF](StorageFile ^ resCode)
+			{
+				// If a backup operation has been requested instead of an execute operation,
+				// skip reading the exit code and shut the app down to release any locks on the settings file.
+				if (bRF) {
+					Windows::UI::Xaml::Application::Current->Exit();
+					return;
 				}
+
+				// Sleep for 250ms to allow the subroutine time to finish its work and write its exit code
+				std::this_thread::sleep_for(std::chrono::milliseconds(250));
+				// Read the exit code from the target file
+				concurrency::create_task(FileIO::ReadTextAsync(resCode)).then([rpm, sel, resCode, resultF](String ^ code) 
+				{
+					// If the launcher wrote a code, check it
+					if (code)
+						// If the code is 0x02 (FILE_NOT_FOUND), the reference is probably not valid anymore, give the user
+						// the option to remove it
+						if (code->Length() > 0 && code == "2")
+							rpm->notifyNoFile(*sel);
+
+					// Remove the result code and process name files since they are no longer needed
+					resCode->DeleteAsync();
+					resultF->DeleteAsync();
+					/// Hi, Joe. Enjoying the asyncness? ;)
+				});
 			});
-		}
+		});
 	});
-}
-
-
-void FinalUWP::MainPage::ExportSettings_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-	// TODO Set up flags for backup, run Launch_ONClicked, modify to write source/target files to TPC, launch FTPL with Backup arg set,
-	// modify UWPProcessLauncher to read source/target and copy with delay after main app exits
-}
-
-
-void FinalUWP::MainPage::ImportSettings_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
-{
-	//TODO Same as above but in reverse with Restore arg set
 }

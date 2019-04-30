@@ -45,7 +45,8 @@ void FinalUWP::FileChooserDialog::ContentDialog_PrimaryButtonClick(ContentDialog
 
 void FinalUWP::FileChooserDialog::ContentDialog_SecondaryButtonClick(ContentDialog^ sender, ContentDialogButtonClickEventArgs^ args)
 {
-	// Intentionally left blank
+	// Clear state before exiting
+	this->Clear();
 }
 
 
@@ -86,4 +87,7 @@ void FinalUWP::FileChooserDialog::Clear()
 	ErrorDisplay->Visibility = Windows::UI::Xaml::Visibility::Collapsed;
 	FilePath->Text = "";
 	AppName->Text = "";
+	// Must be cleared-by-pointer due to how ref classes work
+	StorageFile^* tmp = &(this->chosen);
+	(*tmp) = nullptr;
 }

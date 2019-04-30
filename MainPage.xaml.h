@@ -41,6 +41,9 @@ namespace FinalUWP
 		void setAdminStateL(bool state);
 		void notifyNoFile(UINT appIndex);
 
+		void RunWin32Subroutine(byte actionID, Platform::String^ targetPath);
+		bool CheckLaunchRequirements();
+
 	private:
 		Windows::UI::Xaml::Interop::IBindableVector^ appSource; // Bound to AppList
 		Windows::UI::Xaml::Interop::IBindableVector^ metaSource; // Bound to DetailList
