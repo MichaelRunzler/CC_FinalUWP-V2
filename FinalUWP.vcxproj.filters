@@ -235,6 +235,9 @@
     <Image Include="Assets\import-2.png">
       <Filter>Assets</Filter>
     </Image>
+    <Image Include="Assets\FileIcon.png">
+      <Filter>Assets</Filter>
+    </Image>
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest" />

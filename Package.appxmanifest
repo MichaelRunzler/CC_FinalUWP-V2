@@ -6,17 +6,18 @@
   xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
   xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities"
   xmlns:desktop="http://schemas.microsoft.com/appx/manifest/desktop/windows10"
-  IgnorableNamespaces="uap mp">
+  xmlns:iot="http://schemas.microsoft.com/appx/manifest/iot/windows10"
+  IgnorableNamespaces="uap mp iot">
 
   <Identity
     Name="ark.applauncher.v2"
     Publisher="CN=Lemondeath"
-    Version="2.0.0.0" />
+    Version="2.1.8.0" />
 
   <mp:PhoneIdentity PhoneProductId="3021032e-eef6-43c5-aa31-2f7a60fa9079" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
-    <DisplayName>FinalUWP</DisplayName>
+    <DisplayName>ARK Application Launcher (UWP v2)</DisplayName>
     <PublisherDisplayName>ARK Software, IRC</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
@@ -38,7 +39,7 @@
         Square150x150Logo="Assets\Square150x150Logo.png"
         Square44x44Logo="Assets\Square44x44Logo.png"
         BackgroundColor="transparent"
-        Description="FinalUWP">
+        Description="Provides a convenient UI for indexing and launching Windows games and applications. Provides utilities for editing metadata and restricting application access to authorized users. A project developed by Ethan Scott for the 2019 final of the Columbia College Intro Programming class.">
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" Square71x71Logo="Assets\SmallTile.png" Square310x310Logo="Assets\LargeTile.png"/>
         <uap:SplashScreen Image="Assets\SplashScreen.png" />
       </uap:VisualElements>
@@ -57,7 +58,10 @@
             <uap:SupportedFileTypes>
               <uap:FileType>.tpc</uap:FileType>
             </uap:SupportedFileTypes>
-            <uap:Logo>Assets\SmallTile.scale-100.png</uap:Logo>
+            <uap:Logo>Assets\FileIcon.png</uap:Logo>
+            <uap:EditFlags AlwaysUnsafe="true"/>
+            <uap:DisplayName>Trans-Process Communications Cache</uap:DisplayName>
+            <uap:InfoTip>ARK TPC Cache File</uap:InfoTip>
           </uap:FileTypeAssociation>
         </uap:Extension>
       </Extensions>
@@ -68,5 +72,7 @@
     <Capability Name="internetClient"/>
     <rescap:Capability Name="runFullTrust"/>
     <uap:Capability Name="documentsLibrary"/>
+    <iot:Capability Name="systemManagement"/>
+    <uap:Capability Name="userAccountInformation"/>
   </Capabilities>
 </Package>

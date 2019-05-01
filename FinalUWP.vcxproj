@@ -131,6 +131,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
     <PackageCertificateKeyFile>FinalUWP_TemporaryKey.pfx</PackageCertificateKeyFile>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppxAutoIncrementPackageRevision>True</AppxAutoIncrementPackageRevision>
+    <AppxBundle>Always</AppxBundle>
+    <AppxBundlePlatforms>x64|arm|arm64</AppxBundlePlatforms>
+    <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
+    <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <ClCompile>
@@ -231,6 +237,7 @@
     <Image Include="Assets\dn_arrow.png" />
     <Image Include="Assets\export-2.png" />
     <Image Include="Assets\export.png" />
+    <Image Include="Assets\FileIcon.png" />
     <Image Include="Assets\import-2.png" />
     <Image Include="Assets\import.png" />
     <Image Include="Assets\LargeTile.scale-100.png" />

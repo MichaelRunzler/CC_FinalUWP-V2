@@ -9,5 +9,9 @@
     <AppIconSource>D:\Projects\Denorios\CC_FinalUWP\Assets\Square44x44Logo.altform-unplated_targetsize-256.png</AppIconSource>
     <SplashScreenSource>D:\Projects\Denorios\CC_FinalUWP\Assets\Square44x44Logo.altform-unplated_targetsize-256.png</SplashScreenSource>
     <PackageLogoSource>D:\Projects\Denorios\CC_FinalUWP\Assets\Square44x44Logo.altform-unplated_targetsize-256.png</PackageLogoSource>
+    <UapAppxPackageBuildMode>SideloadOnly</UapAppxPackageBuildMode>
+    <AppxShowAllApps>False</AppxShowAllApps>
+    <AppxBuildConfigurationSelection>x64|arm|arm64</AppxBuildConfigurationSelection>
+    <PackageOptionalProjectsInIdeBuilds>False</PackageOptionalProjectsInIdeBuilds>
   </PropertyGroup>
 </Project>
