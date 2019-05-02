@@ -52,6 +52,12 @@ MainPage::MainPage()
 	for (AppRef r : AppIndex::getList())
 		appSource->Append(ref new String(r.appName.c_str()));
 
+	// Set theme colors for user-mode controls
+	SolidColorBrush^ bg = ref new SolidColorBrush((Windows::UI::Color)Application::Current->Resources->Lookup("SystemAccentColor"));
+	Launch->Background = bg;
+	MoveUp->Background = bg;
+	MoveDown->Background = bg;
+
 	// Set the initial lock state from the SecurityManager
 	setAdminStateL(SecurityManager::checkState());
 }
@@ -360,6 +366,29 @@ void FinalUWP::MainPage::AppList_SelectionChanged(Platform::Object^ sender, Wind
 }
 
 
+void FinalUWP::MainPage::Save_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
+{
+	// Change icon back to normal after 2 seconds
+	MainPage^ rpm = this;
+	concurrency::create_task([rpm]()
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(2000));
+
+		// Fire event on main thread, since it accesses front-facing UI element properties
+		Windows::ApplicationModel::Core::CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync
+		(Windows::UI::Core::CoreDispatcherPriority::Low, ref new Windows::UI::Core::DispatchedHandler([rpm](){
+			VisualStateManager::GoToState(rpm, "SaveNormal", true);
+		}));
+	});
+
+	// Initiate save operation
+	ConfigRelay::Save();
+
+	// Change icon to a checkmark
+	VisualStateManager::GoToState(this, "SaveClicked", true);
+}
+
+
 void FinalUWP::MainPage::Launch_Click(Platform::Object ^ sender, RoutedEventArgs ^ e)
 {
 	// Ensure that selection is within bounds
@@ -373,10 +402,28 @@ void FinalUWP::MainPage::Launch_Click(Platform::Object ^ sender, RoutedEventArgs
 	AppRef ar = AppIndex::getAt(AppList->SelectedIndex);
 	if (ar.absolutePath == std::wstring()) return;
 
+	// Disable launch button
+	Launch->IsEnabled = false;
+	Launch->Content = "Launching...";
+
+	// Re-enable button after 4 seconds
+	Button^* bsa = &(this->Launch);
+	concurrency::create_task([bsa]()
+	{
+		std::this_thread::sleep_for(std::chrono::milliseconds(4000));
+
+		// Fire event on main thread, since it accesses front-facing UI element properties
+		Windows::ApplicationModel::Core::CoreApplication::MainView->CoreWindow->Dispatcher->RunAsync
+		(Windows::UI::Core::CoreDispatcherPriority::Low, ref new Windows::UI::Core::DispatchedHandler([bsa]()
+		{
+			(*bsa)->Content = "Launch App";
+			(*bsa)->IsEnabled = true;
+		}));
+	});
+
 	// Delegate down to the subroutine function in EXECUTE mode
 	RunWin32Subroutine(0, ref new String(ar.absolutePath.c_str()));
 }
-
 
 void FinalUWP::MainPage::ExportSettings_Click(Platform::Object^ sender, Windows::UI::Xaml::RoutedEventArgs^ e)
 {
@@ -582,8 +629,8 @@ void FinalUWP::MainPage::RunWin32Subroutine(byte actionID, String^ targetPath)
 							rpm->notifyNoFile(*sel);
 
 					// Remove the result code and process name files since they are no longer needed
-					resCode->DeleteAsync();
-					resultF->DeleteAsync();
+					resCode->DeleteAsync(StorageDeleteOption::PermanentDelete);
+					resultF->DeleteAsync(StorageDeleteOption::PermanentDelete);
 					/// Hi, Joe. Enjoying the asyncness? ;)
 				});
 			});

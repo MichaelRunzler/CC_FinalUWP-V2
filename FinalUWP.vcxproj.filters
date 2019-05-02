@@ -29,6 +29,9 @@
     <ClCompile Include="Library\MetaPair.cpp">
       <Filter>Library</Filter>
     </ClCompile>
+    <ClCompile Include="Library\ConfigRelay.cpp">
+      <Filter>Library</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="pch.h" />
@@ -45,6 +48,9 @@
       <Filter>Library</Filter>
     </ClInclude>
     <ClInclude Include="Library\MetaPair.h">
+      <Filter>Library</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\ConfigRelay.h">
       <Filter>Library</Filter>
     </ClInclude>
   </ItemGroup>
@@ -236,6 +242,12 @@
       <Filter>Assets</Filter>
     </Image>
     <Image Include="Assets\FileIcon.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\checkmark.png">
+      <Filter>Assets</Filter>
+    </Image>
+    <Image Include="Assets\save.png">
       <Filter>Assets</Filter>
     </Image>
   </ItemGroup>

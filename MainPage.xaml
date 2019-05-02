@@ -18,6 +18,7 @@
                     <VisualState.Setters>
                         <Setter Target="ParentContainer.VerticalAlignment" Value="Stretch"/>
                         <Setter Target="ParentContainer.Orientation" Value="Horizontal"/>
+                        <Setter Target="ControlParentContainer.Margin" Value="0,65,0,0"/>
                         <Setter Target="ListControlContainer.Orientation" Value="Vertical"/>
                         <Setter Target="SecurityContainer.Orientation" Value="Vertical"/>
                         <Setter Target="SecurityContainer.HorizontalAlignment" Value="Left"/>
@@ -26,12 +27,12 @@
                         <Setter Target="AppListDivider.Visibility" Value="Collapsed"/>
                         <Setter Target="AppListVDivider.Visibility" Value="Visible"/>
                         <Setter Target="DetailVDivider.Visibility" Value="Visible"/>
-                        <Setter Target="AppList.Width" Value="400"/>
-                        <Setter Target="DetailList.Width" Value="400"/>
-                        <Setter Target="AppList.Height" Value="350"/>
-                        <Setter Target="DetailList.Height" Value="350"/>
-                        <Setter Target="AppList.MaxHeight" Value="350"/>
-                        <Setter Target="DetailList.MaxHeight" Value="350"/>
+                        <Setter Target="AppList.Width" Value="500"/>
+                        <Setter Target="DetailList.Width" Value="500"/>
+                        <Setter Target="AppList.Height" Value="550"/>
+                        <Setter Target="DetailList.Height" Value="550"/>
+                        <Setter Target="AppList.MaxHeight" Value="550"/>
+                        <Setter Target="DetailList.MaxHeight" Value="550"/>
                         <Setter Target="AppList.BorderThickness" Value="2"/>
                         <Setter Target="DetailList.BorderThickness" Value="2"/>
                     </VisualState.Setters>
@@ -43,6 +44,7 @@
                     <VisualState.Setters>
                         <Setter Target="ParentContainer.VerticalAlignment" Value="Top"/>
                         <Setter Target="ParentContainer.Orientation" Value="Vertical"/>
+                        <Setter Target="ControlParentContainer.Margin" Value="0,0,0,0"/>
                         <Setter Target="ListControlContainer.Orientation" Value="Horizontal"/>
                         <Setter Target="SecurityContainer.Orientation" Value="Horizontal"/>
                         <Setter Target="SecurityContainer.HorizontalAlignment" Value="Center"/>
@@ -72,7 +74,8 @@
                         <Setter Target="Reset.Visibility" Value="Visible"/>
                         <Setter Target="ExportSettings.Visibility" Value="Visible"/>
                         <Setter Target="ImportSettings.Visibility" Value="Visible"/>
-                        <Setter Target="LockImage.Source" Value="/Assets/lock.png"/>
+                        <Setter Target="Save.Visibility" Value="Visible"/>
+                        <Setter Target="LockImage.Source" Value="/Assets/unlock.png"/>
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="NoAdmin">
@@ -84,7 +87,20 @@
                         <Setter Target="Reset.Visibility" Value="Collapsed"/>
                         <Setter Target="ExportSettings.Visibility" Value="Collapsed"/>
                         <Setter Target="ImportSettings.Visibility" Value="Collapsed"/>
-                        <Setter Target="LockImage.Source" Value="/Assets/unlock.png"/>
+                        <Setter Target="Save.Visibility" Value="Collapsed"/>
+                        <Setter Target="LockImage.Source" Value="/Assets/lock.png"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+            <VisualStateGroup>
+                <VisualState x:Name="SaveNormal">
+                    <VisualState.Setters>
+                        <Setter Target="SaveImage.Source" Value="/Assets/save.png"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="SaveClicked">
+                    <VisualState.Setters>
+                        <Setter Target="SaveImage.Source" Value="/Assets/checkmark.png"/>
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -93,37 +109,46 @@
         <StackPanel x:Name="AppListContainer" Margin="10,10,10,10" HorizontalAlignment="Left" VerticalAlignment="Stretch">
             <TextBlock x:Name="AppListHeader" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Center" Text="Available Apps" FontSize="24"/>
             <ListView x:Name="AppList" Width="400" Height="350" MaxHeight="350" Margin="0,0,0,0" HorizontalAlignment="Center" SelectionChanged="AppList_SelectionChanged" KeyUp="AppList_KeyUp" BorderBrush="LightSkyBlue" BorderThickness="2"
-                      ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollMode="Enabled" ScrollViewer.IsScrollInertiaEnabled="True" ItemsSource="{x:Bind AppSource}"/>
-            <Button x:Name="Launch" Width="300" Margin="0,10,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="Launch_Click" FontSize="16" FontWeight="SemiBold"  Content="Launch App" ToolTipService.ToolTip="Launch the selected application!"/>
+                      ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollMode="Enabled" ScrollViewer.IsScrollInertiaEnabled="True" ItemsSource="{x:Bind AppSource}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <TextBlock FontSize="36" HorizontalAlignment="Left" Text="{Binding}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <Button x:Name="Launch" Width="300" Margin="0,10,0,10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="Launch_Click" FontSize="16" FontWeight="SemiBold"  Content="Launch App" ToolTipService.ToolTip="Launch the selected application!" />
             <Image x:Name="AppListDivider" Source="/Assets/divider.png" Stretch="Fill" MaxHeight="12" Visibility="Collapsed"/>
         </StackPanel>
 
-        <Image x:Name="AppListVDivider" Source="/Assets/divider_90.png" Margin="0,10,0,0" Stretch="Fill" MaxWidth="12" Height="440" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        <Image x:Name="AppListVDivider" Source="/Assets/divider_90.png" Margin="0,10,0,0" Stretch="Fill" MaxWidth="12" Height="640" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 
-        <StackPanel x:Name="ControlParentContainer" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top">
+        <StackPanel x:Name="ControlParentContainer" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,65,0,0">
             <StackPanel x:Name="ListControlContainer" Margin="20,10,20,10" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Top">
-                <Button x:Name="MoveUp" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="30" Width="30" Click="MoveUp_Click" ToolTipService.ToolTip="Move Cursor UP">
-                    <Image Source="/Assets/up_arrow.png" Stretch="Fill" MaxHeight="30" MaxWidth="30"/>
+                <Button x:Name="MoveUp" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="45" Width="45" Click="MoveUp_Click" ToolTipService.ToolTip="Move Cursor UP">
+                    <Image Source="/Assets/up_arrow.png" Stretch="Fill" MaxHeight="45" MaxWidth="45"/>
                 </Button>
-                <Button x:Name="MoveDown" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="30" Width="30" Click="MoveDown_Click" ToolTipService.ToolTip="Move Cursor DOWN">
-                    <Image Source="/Assets/dn_arrow.png" Stretch="Fill" MaxHeight="30" MaxWidth="30"/>
+                <Button x:Name="MoveDown" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="45" Width="45" Click="MoveDown_Click" ToolTipService.ToolTip="Move Cursor DOWN">
+                    <Image Source="/Assets/dn_arrow.png" Stretch="Fill" MaxHeight="45" MaxWidth="45"/>
                 </Button>
-                <Button x:Name="AddApp" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="30" Width="30" Click="AddApp_Click" ToolTipService.ToolTip="Add App">
-                    <Image Source="/Assets/plus_sign.png" Stretch="Fill" MaxHeight="30" MaxWidth="30"/>
+                <Button x:Name="AddApp" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="45" Width="45" Click="AddApp_Click" ToolTipService.ToolTip="Add App">
+                    <Image Source="/Assets/plus_sign.png" Stretch="Fill" MaxHeight="45" MaxWidth="45"/>
                 </Button>
-                <Button x:Name="RemoveApp" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="30" Width="30" Click="RemoveApp_Click" ToolTipService.ToolTip="Remove App">
-                    <Image Source="/Assets/minus_sign.png" Stretch="Fill" MaxHeight="30" MaxWidth="30"/>
+                <Button x:Name="RemoveApp" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="45" Width="45" Click="RemoveApp_Click" ToolTipService.ToolTip="Remove App">
+                    <Image Source="/Assets/minus_sign.png" Stretch="Fill" MaxHeight="45" MaxWidth="45"/>
                 </Button>
             </StackPanel>
 
-            <Image Name="ControlDivider" Source="/Assets/divider.png" Stretch="Fill" MaxHeight="8" MaxWidth="40" Visibility="Visible"/>
+            <Image Name="ControlDivider" HorizontalAlignment="Center"  Source="/Assets/divider.png" Stretch="Fill" MaxHeight="8" MaxWidth="50" Visibility="Visible"/>
 
-            <StackPanel x:Name="SecurityContainer" Margin="20,10,20,10" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Bottom">
+            <StackPanel x:Name="SecurityContainer" Margin="22,10,20,10" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Bottom">
                 <Button x:Name="Lock" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="40" Width="40" Click="Lock_Click" ToolTipService.ToolTip="Enable/Disable Administrator Access">
                     <Image x:Name="LockImage" Source="/Assets/lock.png" Stretch="Fill" MaxHeight="40" MaxWidth="40"/>
                 </Button>
                 <Button x:Name="PassCode" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="40" Width="40" Click="PassCode_Click" ToolTipService.ToolTip="Set/Reset Administrator Access PIN">
                     <Image Source="/Assets/PIN.png" Stretch="Fill" MaxHeight="40" MaxWidth="40"/>
+                </Button>
+                <Button x:Name="Save" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="40" Width="40" Click="Save_Click" ToolTipService.ToolTip="Save Current Settings Now">
+                    <Image x:Name="SaveImage" Source="/Assets/save.png" Stretch="Fill" MaxHeight="40" MaxWidth="40"/>
                 </Button>
                 <Button x:Name="Reset" Margin="5,5,5,5" Padding="0" BorderThickness="5" Height="40" Width="40" Click="Reset_Click" ToolTipService.ToolTip="Reset All Settings to Defaults">
                     <Image Source="/Assets/reset.png" Stretch="Fill" MaxHeight="40" MaxWidth="40"/>
@@ -137,14 +162,20 @@
             </StackPanel>
         </StackPanel>
 
-        <Image x:Name="DetailVDivider" Source="/Assets/divider_90.png" Margin="0,10,0,0" Stretch="Fill" MaxWidth="12" Height="440" HorizontalAlignment="Center" VerticalAlignment="Top"/>
+        <Image x:Name="DetailVDivider" Source="/Assets/divider_90.png" Margin="0,10,0,0" Stretch="Fill" MaxWidth="12" Height="640" HorizontalAlignment="Center" VerticalAlignment="Top"/>
 
         <StackPanel x:Name="DetailContainer" Margin="10,10,10,10" Orientation="Vertical" HorizontalAlignment="Left" VerticalAlignment="Top">
             <Image x:Name="DetailDivider" Source="/Assets/divider.png" Stretch="Fill" MaxHeight="12" Visibility="Collapsed"/>
             <TextBlock x:Name="DetailHeader" Margin="0,0,0,10" HorizontalAlignment="Center" VerticalAlignment="Top" Text="Details" FontSize="24"/>
             <ListView x:Name="DetailList" Width="400" Height="350" MaxHeight="350" Margin="0,0,0,0" HorizontalAlignment="Center" SelectionMode="None" BorderBrush="LightSkyBlue" BorderThickness="2" 
                       ScrollViewer.VerticalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollMode="Enabled" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollMode="Enabled" 
-                      ScrollViewer.IsScrollInertiaEnabled="True" ItemsSource="{x:Bind MetaSource}"/>
+                      ScrollViewer.IsScrollInertiaEnabled="True" ItemsSource="{x:Bind MetaSource}">
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="x:String">
+                        <TextBlock FontSize="20" HorizontalAlignment="Left" Text="{Binding}"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
             <Button x:Name="EditMetadata" Width="300" Margin="0, 10, 0, 10" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="EditMetadata_Click" FontSize="16" Content="Edit Metadata..." ToolTipService.ToolTip="Edit the detailed metadata for this reference"/>
         </StackPanel>
 

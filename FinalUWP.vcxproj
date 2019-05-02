@@ -193,6 +193,7 @@
     <ClInclude Include="Library\AppIndex.h" />
     <ClInclude Include="Library\AppRef.h" />
     <ClInclude Include="Library\Clearable.h" />
+    <ClInclude Include="Library\ConfigRelay.h" />
     <ClInclude Include="Library\MetaPair.h" />
     <ClInclude Include="Library\SecurityManager.h" />
     <ClInclude Include="MetaEdit.xaml.h">
@@ -231,6 +232,7 @@
     </CopyFileToFolders>
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Assets\checkmark.png" />
     <Image Include="Assets\del.png" />
     <Image Include="Assets\divider.png" />
     <Image Include="Assets\divider_90.png" />
@@ -251,6 +253,7 @@
     <Image Include="Assets\PIN.png" />
     <Image Include="Assets\plus_sign.png" />
     <Image Include="Assets\reset.png" />
+    <Image Include="Assets\save.png" />
     <Image Include="Assets\SmallTile.scale-100.png" />
     <Image Include="Assets\SmallTile.scale-125.png" />
     <Image Include="Assets\SmallTile.scale-150.png" />
@@ -304,6 +307,7 @@
     </ClCompile>
     <ClCompile Include="Library\AppIndex.cpp" />
     <ClCompile Include="Library\AppRef.cpp" />
+    <ClCompile Include="Library\ConfigRelay.cpp" />
     <ClCompile Include="Library\MetaPair.cpp" />
     <ClCompile Include="Library\SecurityManager.cpp" />
     <ClCompile Include="MainPage.xaml.cpp">

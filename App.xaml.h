@@ -6,6 +6,7 @@
 #pragma once
 
 #include "App.g.h"
+#include "Library/ConfigRelay.h"
 #include "Library/AppIndex.h"
 #include "Library/SecurityManager.h"
 
