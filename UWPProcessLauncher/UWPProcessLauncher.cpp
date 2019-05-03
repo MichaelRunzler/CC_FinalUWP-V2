@@ -53,6 +53,7 @@ int process(const int argc, char* argv[])
 							// or the file that backup data will be read from or restore information
 							// will be saved to if in restore mode
 	LPWSTR lpArgs = NULL; // Arguments to be passed to the executed file if in execution mode
+	LPWSTR lpDir = NULL;
 	int delay = 0;
 
 	// Print short message to the console detailing what this program is in case someone starts it up by itself
@@ -123,6 +124,10 @@ int process(const int argc, char* argv[])
 		getline(fin, tmpTarget);
 		lpTarget = charToWCHAR(tmpTarget.c_str(), strlen(tmpTarget.c_str()));
 
+		// Re-use cache string for working path of target
+		tmpTarget = tmpTarget.substr(0, tmpTarget.find_last_of('\\'));
+		lpDir = charToWCHAR(tmpTarget.c_str(), strlen(tmpTarget.c_str()));
+
 		// If a backup or restore operation was specified, read the target for that
 		// operation from the second line in the name file
 		if (backup) {
@@ -145,7 +150,7 @@ int process(const int argc, char* argv[])
 	{
 		// In this case, the HINSTANCE handle is actually a result code, so we store it
 		// and check it for a result.
-		HINSTANCE h = ShellExecuteW(NULL, L"open", lpTarget, lpArgs, NULL, SW_SHOW);
+		HINSTANCE h = ShellExecuteW(NULL, L"open", lpTarget, lpArgs, lpDir, SW_SHOW);
 
 		// For some reason, the 'success' result code is 42, all others except 0 are failure codes.
 		// Treat 42 as 0 (HRESULT_SUCCESS), all others, push as nonzero exit codes to the shell method.
